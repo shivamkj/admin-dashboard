@@ -1,0 +1,23 @@
+{
+  "name": "fastify-backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "fastify.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon fastify.js",
+    "prisma_generate": "prisma generate",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^4.5.0",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.9.2",
+    "nodemon": "^2.0.20"
+  },
+  "devDependencies": {
+    "prisma": "^4.5.0"
+  }
+}

@@ -1,0 +1,2218 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// **** MATCH ****
+
+model matches {
+  id                  String                     @id @default(auto()) @map("_id") @db.ObjectId
+  v                   Int                        @map("__v")
+  ballType            Int
+  createdAt           DateTime                   @db.Date
+  createdBy           String?                    @db.ObjectId
+  currentViewers      Int
+  hasSuperOver        Boolean
+  impressionCount     Int
+  isLive              Boolean
+  isPitchMapEnabled   Boolean
+  isVisible           Boolean
+  isWagonWheelEnabled Boolean
+  link                String?
+  logoOverlay         MatchesLogoOverlay
+  managers            String[]                   @db.ObjectId
+  matchLiveJobId      String
+  matchResult         MatchesMatchResult?
+  matchStatus         MatchesMatchStatus
+  matchStreamVideos   MatchesMatchStreamVideos[]
+  matchType           Int
+  matchVenue          String                     @unique @db.ObjectId
+  matchVideo          String
+  multidayDetails     MatchesMultidayDetails?
+  overPerBowler       Int
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  sponsors            Json?
+  startsAt            DateTime                   @db.Date
+  superOver           MatchesSuperOver[]
+  superOverDetails    MatchesSuperOverDetails?
+  teamOne             TeamWithRoster
+  teamSize            Int
+  teamTwo             TeamWithRoster
+  totalOvers          Int
+  updatedAt           DateTime                   @db.Date
+  viewers             String[]                   @db.ObjectId
+
+  venue venues @relation(fields: [matchVenue], references: [id])
+
+  @@index([teamOne.teamId], map: "teamOne.teamId_1")
+  @@index([teamTwo.teamId], map: "teamTwo.teamId_1")
+  @@index([matchType], map: "matchType_1")
+  @@index([startsAt], map: "startsAt_1")
+  @@index([isVisible], map: "isVisible_1")
+  @@index([matchStatus.status], map: "matchStatus.status_1")
+}
+
+model footballmatches {
+  id                String                      @id @default(auto()) @map("_id") @db.ObjectId
+  v                 Int                         @map("__v")
+  ballType          Int
+  createdAt         DateTime                    @db.Date
+  createdBy         String?                     @db.ObjectId
+  currentViewers    Int
+  halfTimeDuration  Int
+  impressionCount   Int
+  isLive            Boolean
+  isPitchMapEnabled Boolean
+  isVisible         Boolean
+  link              String
+  logoOverlay       MatchesLogoOverlay
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  managers          Json?
+  matchLiveJobId    String
+  matchResult       FootballmatchesMatchResult?
+  matchStatus       MatchesMatchStatus
+  matchStreamVideos MatchesMatchStreamVideos[]
+  matchType         Int
+  matchVenue        String                      @db.ObjectId
+  matchVideo        String
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  sponsors          Json?
+  startsAt          DateTime                    @db.Date
+  teamOne           TeamWithRoster
+  teamTwo           TeamWithRoster
+  updatedAt         DateTime                    @db.Date
+  viewers           String[]                    @db.ObjectId
+
+  venue venues @relation(fields: [matchVenue], references: [id])
+
+  @@index([teamOne.teamId], map: "teamOne.teamId_1")
+  @@index([teamTwo.teamId], map: "teamTwo.teamId_1")
+  @@index([matchType], map: "matchType_1")
+  @@index([startsAt], map: "startsAt_1")
+  @@index([isVisible], map: "isVisible_1")
+  @@index([matchStatus.status], map: "matchStatus.status_1")
+}
+
+type FootballmatchesMatchResult {
+  matchResultDetails FootballmatchesMatchResultMatchResultDetails
+  result             String
+}
+
+type FootballmatchesMatchResultMatchResultDetails {
+  unspecified FootballmatchesMatchResultMatchResultDetailsUnspecified
+}
+
+type FootballmatchesMatchResultMatchResultDetailsUnspecified {
+  result          String
+  resultStatement String
+}
+
+type TeamWithRoster {
+  rosterId String @db.ObjectId
+  teamId   String @db.ObjectId
+}
+
+type MatchesSuperOverDetails {
+  overPerBowler Int
+  teamSize      Int
+  totalOvers    Int
+}
+
+type MatchesSuperOver {
+  id                  String   @map("_id") @db.ObjectId
+  partnerships        String[] @db.ObjectId
+  superFirstInningId  String   @db.ObjectId
+  superFirstOverId    String   @db.ObjectId
+  superSecondInningId String?  @db.ObjectId
+  superSecondOverId   String?  @db.ObjectId
+  superStatsId        String   @db.ObjectId
+}
+
+type MatchesMultidayDetails {
+  days           Int
+  followOnRule   Int?
+  inningsPerTeam Int
+  oversPerDay    Int
+}
+
+type MatchesMatchStreamVideos {
+  id                  String @map("_id") @db.ObjectId
+  matchLiveJobId      String
+  matchVideo          String
+  matchVideoId        Float
+  matchVideoStreamUrl String
+}
+
+type MatchesLogoOverlay {
+  liveLabel   String
+  logoUrl     String
+  noLiveLabel String
+  visibility  Boolean
+}
+
+type MatchesMatchStatus {
+  description String?
+  reason      String?
+  status      String
+}
+
+type MatchesMatchResult {
+  matchResultDetails MatchesMatchResultMatchResultDetails?
+  result             String?
+}
+
+type MatchesMatchResultMatchResultDetails {
+  specified   MatchesMatchResultMatchResultDetailsSpecified?
+  /// Nested objects had no data in the sample dataset to introspect a nested type.
+  unspecified Json?
+}
+
+type MatchesMatchResultMatchResultDetailsSpecified {
+  winningTeam String @db.ObjectId
+}
+
+// **** TEAM & ROSTER ****
+
+model teams {
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  v                  Int           @map("__v")
+  banner             String?
+  createdAt          DateTime      @db.Date
+  description        String
+  isActive           Boolean
+  link               String?
+  location           TeamsLocation
+  logo               String
+  manager            String        @db.ObjectId
+  managers           String[]      @db.ObjectId
+  name               String
+  owner              String        @db.ObjectId
+  shortName          String
+  teamCity           String?
+  teamPrimaryColor   String
+  teamSecondaryColor String
+  updatedAt          DateTime      @db.Date
+
+  @@index([isActive], map: "isActive_1")
+  @@index([teamCity], map: "teamCity_1")
+  @@index([owner], map: "owner_1")
+  @@index([manager], map: "manager_1")
+  @@index([name], map: "name_1")
+}
+
+type TeamsLocation {
+  address String?
+  lat     Float?
+  long    Float?
+  placeId String?
+}
+
+// **** TEAM LOCATION ****
+
+model venues {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  v               Int               @map("__v")
+  address         VenuesAddress
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  bowlingEnds     Json?
+  createdAt       DateTime          @db.Date
+  groundName      VenuesGroundName
+  latitude        Float
+  longitude       Float
+  name            String
+  updatedAt       DateTime          @db.Date
+  weather         VenuesWeather
+  matches         matches?
+  footballmatches footballmatches[]
+}
+
+type VenuesAddress {
+  city    String
+  country String
+  placeId String
+}
+
+type VenuesGroundName {
+  name    String
+  placeId String
+}
+
+type VenuesWeather {
+  icon             String
+  temperature      Int
+  unit             String
+  weatherCondition String
+}
+
+// **** USER ****
+
+model usersports {
+  id              String                   @id @default(auto()) @map("_id") @db.ObjectId
+  v               Int                      @map("__v")
+  battingDetails  UsersportsBattingDetails
+  bio             String?
+  bowlingDetails  UsersportsBowlingDetails
+  createdAt       DateTime                 @db.Date
+  deviceToken     String?
+  dob             DateTime?                @db.Date
+  email           String?
+  fUid            String                   @unique(map: "fUid_1")
+  firstName       String
+  gameType        String?
+  gender          Int?
+  isEmailVerified Boolean
+  isPhoneVerified Boolean
+  lastName        String
+  link            String?
+  location        UsersportsLocation
+  mobileNumber    String?
+  onboarded       Boolean
+  playingRole     Int?
+  profileImage    String
+  updatedAt       DateTime                 @db.Date
+  userroles       userroles?
+  userposts       userposts?
+
+  userSource users? @relation(fields: [fUid], references: [fUid])
+
+  @@index([location.city], map: "location.city_1")
+  @@index([firstName], map: "firstName_1")
+  @@index([lastName], map: "lastName_1")
+  @@index([playingRole], map: "playingRole_1")
+}
+
+model users {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  v          Int         @map("__v")
+  createdAt  DateTime    @db.Date
+  fUid       String      @unique(map: "fUid_1")
+  provider   String
+  source     String
+  updatedAt  DateTime    @db.Date
+  /// Field referred in an index, but found no data to define the type.
+  name       Json?
+  usersports usersports?
+
+  @@index([name], map: "name_1")
+}
+
+type UsersportsBattingDetails {
+  battingHand  Boolean?
+  battingOrder Int?
+}
+
+type UsersportsBowlingDetails {
+  bowlingAction Int?
+  bowlingArm    Boolean?
+  bowlingStyle  Int?
+  deliveryType  Int?
+}
+
+type UsersportsLocation {
+  city    String
+  country String
+  state   String
+}
+
+// **** USER ROLE ****
+
+model userroles {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  v            Int      @map("__v")
+  createdAt    DateTime @db.Date
+  resourceId   String   @db.ObjectId
+  resourceName String
+  role         String
+  updatedAt    DateTime @db.Date
+  user         String   @unique @db.ObjectId
+
+  userDetails usersports @relation(fields: [user], references: [id])
+
+  @@index([resourceId], map: "resourceId_1")
+  @@index([resourceName], map: "resourceName_1")
+  @@index([role], map: "role_1")
+  @@index([resourceId, resourceName], map: "resourceId_1_resourceName_1")
+}
+
+// **** POSTS ****
+
+model userposts {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  v              Int      @map("__v")
+  author         String   @unique @db.ObjectId
+  content        String
+  createdAt      DateTime @db.Date
+  imageUrls      String[]
+  isActive       Boolean?
+  isDeleted      Boolean
+  isVisible      Boolean?
+  /// Multiple data types found: Array(String (ObjectId)): 96%, Array(Unknown): 4% out of 113 sampled entries
+  likes          Json?
+  link           String
+  matchId        String?  @db.ObjectId
+  matchName      String?
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  media          Json?
+  numberOfShares Int
+  parentPost     String?  @db.ObjectId
+  replyIds       String[] @db.ObjectId
+  resourceId     String   @db.ObjectId
+  resourceName   String
+  time           DateTime @db.Date
+  updatedAt      DateTime @db.Date
+  videos         String[] @db.ObjectId
+
+  userDetails usersports @relation(fields: [author], references: [id])
+
+  @@index([matchId], map: "matchId_1")
+  @@index([parentPost], map: "parentPost_1")
+}
+
+// **** TOURNAMENTS ****
+
+model tournaments {
+  id               String                      @id @default(auto()) @map("_id") @db.ObjectId
+  v                Int                         @map("__v")
+  ballType         Int?
+  createdAt        DateTime                    @db.Date
+  createdBy        String                      @db.ObjectId
+  description      String?
+  edition          String
+  endsAt           DateTime?                   @db.Date
+  footballMatches  String[]                    @db.ObjectId
+  gameType         Int
+  isVisible        Boolean
+  link             String
+  logo             String?
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  managers         Json?
+  matchType        Int?
+  matches          String[]                    @db.ObjectId
+  name             String
+  noOfPlayers      Int
+  overPerBowler    Int
+  rounds           String[]                    @db.ObjectId
+  sponsors         String[]                    @db.ObjectId
+  startsAt         DateTime?                   @db.Date
+  totalOvers       Int
+  tournamentStatus TournamentsTournamentStatus
+  updatedAt        DateTime                    @db.Date
+
+  @@index([createdBy], map: "createdBy_1")
+  @@index([isVisible], map: "isVisible_1")
+  @@index([rounds], map: "rounds_1")
+  @@index([matches], map: "matches_1")
+}
+
+type TournamentsTournamentStatus {
+  status String
+}
+
+// type ActivefootballmatchesTeamOne {
+//   score Int
+// }
+
+// type ActivefootballmatchesTeamTwo {
+//   score Int
+// }
+
+// type ActivematchesBonus {
+//   id     String @map("_id") @db.ObjectId
+//   runs   Int
+//   team   String
+//   teamId String
+// }
+
+// type ActivematchesDls {
+//   reason      String?
+//   targetOver  Int?
+//   targetScore Int?
+// }
+
+// type ActivematchesPenalties {
+//   id     String  @map("_id") @db.ObjectId
+//   reason String
+//   runs   Int
+//   team   String
+//   teamId String?
+// }
+
+// type ActivematchesProcessDismissal {
+//   batsman String? @db.ObjectId
+//   status  Boolean
+// }
+
+// type ActivematchesSuperOver {
+//   superInning String  @db.ObjectId
+//   superOver   String? @db.ObjectId
+// }
+
+// type ActivematchesTeamOne {
+//   ballsPlayed   Int?
+//   battingStatus String
+//   followOn      Int?
+//   runs          Int?
+//   wickets       Int?
+// }
+
+// type ActivematchesTeamTwo {
+//   ballsPlayed   Int?
+//   battingStatus String
+//   followOn      Int?
+//   runs          Int?
+//   wickets       Int?
+// }
+
+// type BalldumpsDataDump {
+//   ball                         BalldumpsDataDumpBall
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   bowlermaidenover             Json?
+//   endMatchUpdate               BalldumpsDataDumpEndMatchUpdate?
+//   /// Nested objects had no data in the sample dataset to introspect a nested type.
+//   matchIncidentCreate          Json?
+//   overRunsUpdate               BalldumpsDataDumpOverRunsUpdate
+//   partnershipUpdate            BalldumpsDataDumpPartnershipUpdate
+//   updateBatsmanOutDetails      BalldumpsDataDumpUpdateBatsmanOutDetails?
+//   updateBatsmanScore           BalldumpsDataDumpUpdateBatsmanScore
+//   updateBowlerOutDetails       BalldumpsDataDumpUpdateBowlerOutDetails?
+//   updateBowlerScore            BalldumpsDataDumpUpdateBowlerScore
+//   updateExtraDetailsByInningId BalldumpsDataDumpUpdateExtraDetailsByInningId
+//   /// Nested objects had no data in the sample dataset to introspect a nested type.
+//   updateMatchStatsServies      Json?
+//   updateMatchstats             BalldumpsDataDumpUpdateMatchstats
+//   updateScoreCard              BalldumpsDataDumpUpdateScoreCard
+//   updatedMatch                 BalldumpsDataDumpUpdatedMatch
+// }
+
+// type BalldumpsDataDumpBall {
+//   v                     Int                                   @map("__v")
+//   id                    String                                @map("_id") @db.ObjectId
+//   ballNumber            Int
+//   bowler                String                                @db.ObjectId
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   catchDroppedFielderId Json?
+//   createdAt             DateTime                              @db.Date
+//   dismissalDetails      BalldumpsDataDumpBallDismissalDetails
+//   extraDetails          BalldumpsDataDumpBallExtraDetails[]
+//   inningId              String                                @db.ObjectId
+//   matchId               String                                @db.ObjectId
+//   nonStriker            String                                @db.ObjectId
+//   overId                String                                @db.ObjectId
+//   pitchMap              BalldumpsDataDumpBallPitchMap
+//   runScored             Int
+//   runType               Int
+//   striker               String                                @db.ObjectId
+//   updatedAt             DateTime                              @db.Date
+//   wagonWheel            BalldumpsDataDumpBallWagonWheel
+// }
+
+// type BalldumpsDataDumpBallDismissalDetails {
+//   dismissalType   Int
+//   fielderInvolved String?
+// }
+
+// type BalldumpsDataDumpBallExtraDetails {
+//   extra Int
+//   runs  Int
+// }
+
+// type BalldumpsDataDumpBallPitchMap {
+//   bounce BalldumpsDataDumpBallPitchMapBounce
+//   pitch  BalldumpsDataDumpBallPitchMapPitch
+// }
+
+// type BalldumpsDataDumpBallPitchMapBounce {
+//   X Int
+//   Y Int
+// }
+
+// type BalldumpsDataDumpBallPitchMapPitch {
+//   X Int
+//   Y Int
+// }
+
+// type BalldumpsDataDumpBallWagonWheel {
+//   afterBounce Int
+//   elevation   Int
+// }
+
+// type BalldumpsDataDumpEndMatchUpdate {
+//   v                   Int                                             @map("__v")
+//   id                  String                                          @map("_id") @db.ObjectId
+//   ballType            Int
+//   createdAt           DateTime                                        @db.Date
+//   createdBy           String                                          @db.ObjectId
+//   currentViewers      Int
+//   hasSuperOver        Boolean
+//   id_                 String?                                         @map("id")
+//   impressionCount     Int
+//   isLive              Boolean
+//   isPitchMapEnabled   Boolean
+//   isVisible           Boolean
+//   isWagonWheelEnabled Boolean
+//   link                String
+//   logoOverlay         BalldumpsDataDumpEndMatchUpdateLogoOverlay
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   managers            Json?
+//   matchLiveJobId      String
+//   matchResult         BalldumpsDataDumpEndMatchUpdateMatchResult?
+//   matchStatus         BalldumpsDataDumpEndMatchUpdateMatchStatus
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   matchStreamVideos   Json?
+//   matchType           Int
+//   matchVenue          String                                          @db.ObjectId
+//   matchVideo          String
+//   multidayDetails     BalldumpsDataDumpEndMatchUpdateMultidayDetails?
+//   overPerBowler       Int
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   sponsors            Json?
+//   startsAt            DateTime                                        @db.Date
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   superOver           Json?
+//   teamOne             BalldumpsDataDumpEndMatchUpdateTeamOne
+//   teamSize            Int
+//   teamTwo             BalldumpsDataDumpEndMatchUpdateTeamTwo
+//   totalOvers          Int
+//   updatedAt           DateTime                                        @db.Date
+//   viewers             String[]                                        @db.ObjectId
+// }
+
+// type BalldumpsDataDumpEndMatchUpdateLogoOverlay {
+//   liveLabel   String
+//   logoUrl     String
+//   noLiveLabel String
+//   visibility  Boolean
+// }
+
+// type BalldumpsDataDumpEndMatchUpdateMatchResult {
+//   matchResultDetails BalldumpsDataDumpEndMatchUpdateMatchResultMatchResultDetails?
+//   result             String
+// }
+
+// type BalldumpsDataDumpEndMatchUpdateMatchResultMatchResultDetails {
+//   specified BalldumpsDataDumpEndMatchUpdateMatchResultMatchResultDetailsSpecified
+// }
+
+// type BalldumpsDataDumpEndMatchUpdateMatchResultMatchResultDetailsSpecified {
+//   winningTeam String @db.ObjectId
+// }
+
+// type BalldumpsDataDumpEndMatchUpdateMatchStatus {
+//   description String?
+//   reason      String
+//   status      String
+// }
+
+// type BalldumpsDataDumpEndMatchUpdateMultidayDetails {
+//   days           Int
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   followOnRule   Json?
+//   inningsPerTeam Int
+//   oversPerDay    Int
+// }
+
+// type BalldumpsDataDumpEndMatchUpdateTeamOne {
+//   rosterId String @db.ObjectId
+//   teamId   String @db.ObjectId
+// }
+
+// type BalldumpsDataDumpEndMatchUpdateTeamTwo {
+//   rosterId String @db.ObjectId
+//   teamId   String @db.ObjectId
+// }
+
+// type BalldumpsDataDumpOverRunsUpdate {
+//   v           Int      @map("__v")
+//   id          String   @map("_id") @db.ObjectId
+//   bowler      String   @db.ObjectId
+//   bowlingSide String?
+//   createdAt   DateTime @db.Date
+//   inningsId   String   @db.ObjectId
+//   matchId     String   @db.ObjectId
+//   overNo      Int
+//   runs        Int
+//   updatedAt   DateTime @db.Date
+// }
+
+// type BalldumpsDataDumpPartnershipUpdate {
+//   v          Int      @map("__v")
+//   id         String   @map("_id") @db.ObjectId
+//   ballsFaced Int
+//   createdAt  DateTime @db.Date
+//   matchId    String   @db.ObjectId
+//   playerOne  String   @db.ObjectId
+//   playerTwo  String   @db.ObjectId
+//   runs       Int
+//   team       String
+//   updatedAt  DateTime @db.Date
+// }
+
+// type BalldumpsDataDumpUpdateBatsmanOutDetails {
+//   v                   Int                                                @map("__v")
+//   id                  String                                             @map("_id") @db.ObjectId
+//   ballsCount          Int
+//   createdAt           DateTime                                           @db.Date
+//   currentMatchCentury Boolean
+//   currentMatchFifty   Boolean
+//   fourCount           Int
+//   inningId            String                                             @db.ObjectId
+//   isOut               Boolean
+//   matchId             String                                             @db.ObjectId
+//   outDetails          BalldumpsDataDumpUpdateBatsmanOutDetailsOutDetails
+//   player              String                                             @db.ObjectId
+//   runCount            Int
+//   sixCount            Int
+//   updatedAt           DateTime                                           @db.Date
+// }
+
+// type BalldumpsDataDumpUpdateBatsmanOutDetailsOutDetails {
+//   bowler  String  @db.ObjectId
+//   fielder String? @db.ObjectId
+//   outType Int
+// }
+
+// type BalldumpsDataDumpUpdateBatsmanScore {
+//   v                   Int                                            @map("__v")
+//   id                  String                                         @map("_id") @db.ObjectId
+//   ballsCount          Int
+//   createdAt           DateTime                                       @db.Date
+//   currentMatchCentury Boolean
+//   currentMatchFifty   Boolean
+//   fourCount           Int
+//   inningId            String                                         @db.ObjectId
+//   isOut               Boolean
+//   matchId             String                                         @db.ObjectId
+//   outDetails          BalldumpsDataDumpUpdateBatsmanScoreOutDetails?
+//   player              String                                         @db.ObjectId
+//   runCount            Int
+//   sixCount            Int
+//   updatedAt           DateTime                                       @db.Date
+// }
+
+// type BalldumpsDataDumpUpdateBatsmanScoreOutDetails {
+//   bowler  String  @db.ObjectId
+//   fielder String? @db.ObjectId
+//   outType Int
+// }
+
+// type BalldumpsDataDumpUpdateBowlerOutDetails {
+//   v           Int      @map("__v")
+//   id          String   @map("_id") @db.ObjectId
+//   ballsThrown Int
+//   createdAt   DateTime @db.Date
+//   inningId    String   @db.ObjectId
+//   maidenOver  Int
+//   matchId     String   @db.ObjectId
+//   player      String   @db.ObjectId
+//   runCount    Int
+//   updatedAt   DateTime @db.Date
+//   wicketCount Int
+// }
+
+// type BalldumpsDataDumpUpdateBowlerScore {
+//   v           Int      @map("__v")
+//   id          String   @map("_id") @db.ObjectId
+//   ballsThrown Int
+//   createdAt   DateTime @db.Date
+//   inningId    String   @db.ObjectId
+//   maidenOver  Int
+//   matchId     String   @db.ObjectId
+//   player      String   @db.ObjectId
+//   runCount    Int
+//   updatedAt   DateTime @db.Date
+//   wicketCount Int
+// }
+
+// type BalldumpsDataDumpUpdateExtraDetailsByInningId {
+//   v            Int                                                       @map("__v")
+//   id           String                                                    @map("_id") @db.ObjectId
+//   battingTeam  String
+//   bowlingTeam  String
+//   createdAt    DateTime                                                  @db.Date
+//   extraDetails BalldumpsDataDumpUpdateExtraDetailsByInningIdExtraDetails
+//   inningNumber Int
+//   matchId      String                                                    @db.ObjectId
+//   updatedAt    DateTime                                                  @db.Date
+// }
+
+// type BalldumpsDataDumpUpdateExtraDetailsByInningIdExtraDetails {
+//   bye    Int
+//   legBye Int
+//   noBall Int
+//   wide   Int
+// }
+
+// type BalldumpsDataDumpUpdateMatchstats {
+//   v                         Int       @map("__v")
+//   id                        String    @map("_id") @db.ObjectId
+//   createdAt                 DateTime  @db.Date
+//   /// Multiple data types found: Float: 75.5%, Int: 24.5% out of 865 sampled entries
+//   currentRunRate            Json
+//   matchId                   String    @db.ObjectId
+//   /// Multiple data types found: Float: 88.8%, Int: 11.2% out of 865 sampled entries
+//   requiredRunRate           Json?
+//   teamOneFallOfWickets      Boolean[]
+//   teamOneRunAggregateSeries Int[]
+//   teamOneRunRateSeries      Int[]
+//   teamTwoFallOfWickets      Boolean[]
+//   teamTwoRunAggregateSeries Int[]
+//   teamTwoRunRateSeries      Int[]
+//   updatedAt                 DateTime  @db.Date
+// }
+
+// type BalldumpsDataDumpUpdateScoreCard {
+//   v                Int                                        @map("__v")
+//   id               String                                     @map("_id") @db.ObjectId
+//   batters          String[]                                   @db.ObjectId
+//   bowlers          String[]                                   @db.ObjectId
+//   createdAt        DateTime                                   @db.Date
+//   inningId         String                                     @db.ObjectId
+//   score            BalldumpsDataDumpUpdateScoreCardScore
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   superOverBatters Json?
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   superOverBowlers Json?
+//   updatedAt        DateTime                                   @db.Date
+//   yetToBat         BalldumpsDataDumpUpdateScoreCardYetToBat[]
+// }
+
+// type BalldumpsDataDumpUpdateScoreCardScore {
+//   /// Multiple data types found: Float: 85%, Int: 15% out of 865 sampled entries
+//   overs   Json
+//   runs    Int
+//   team    String
+//   wickets Int
+// }
+
+// type BalldumpsDataDumpUpdateScoreCardYetToBat {
+//   firstName String
+//   id        String
+//   lastName  String
+// }
+
+// type BalldumpsDataDumpUpdatedMatch {
+//   v                  Int                                           @map("__v")
+//   id                 String                                        @map("_id") @db.ObjectId
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   bonus              Json?
+//   bowler             String                                        @db.ObjectId
+//   createdAt          DateTime                                      @db.Date
+//   currentBalls       String[]                                      @db.ObjectId
+//   currentPartnership String                                        @db.ObjectId
+//   followOnFlag       Boolean
+//   inning             String                                        @db.ObjectId
+//   lastBatsmanPair    Boolean
+//   match              String                                        @db.ObjectId
+//   nonStriker         String                                        @db.ObjectId
+//   over               String                                        @db.ObjectId
+//   overBalls          Int
+//   overRuns           Int
+//   overWickets        Int
+//   penalties          BalldumpsDataDumpUpdatedMatchPenalties[]
+//   processDismissal   BalldumpsDataDumpUpdatedMatchProcessDismissal
+//   striker            String                                        @db.ObjectId
+//   targetScore        Int
+//   teamOne            BalldumpsDataDumpUpdatedMatchTeamOne
+//   teamTwo            BalldumpsDataDumpUpdatedMatchTeamTwo
+//   undoBall           Boolean
+//   updatedAt          DateTime                                      @db.Date
+// }
+
+// type BalldumpsDataDumpUpdatedMatchPenalties {
+//   id     String @map("_id") @db.ObjectId
+//   reason String
+//   runs   Int
+//   team   String
+//   teamId String
+// }
+
+// type BalldumpsDataDumpUpdatedMatchProcessDismissal {
+//   batsman String? @db.ObjectId
+//   status  Boolean
+// }
+
+// type BalldumpsDataDumpUpdatedMatchTeamOne {
+//   ballsPlayed   Int
+//   battingStatus String
+//   followOn      Int
+//   runs          Int
+//   wickets       Int
+// }
+
+// type BalldumpsDataDumpUpdatedMatchTeamTwo {
+//   ballsPlayed   Int
+//   battingStatus String
+//   followOn      Int
+//   runs          Int
+//   wickets       Int
+// }
+
+// type BallsDismissalDetails {
+//   dismissalType   Int
+//   fielderInvolved String?
+// }
+
+// type BallsExtraDetails {
+//   extra Int
+//   runs  Int
+// }
+
+// type BallsPitchMap {
+//   bounce BallsPitchMapBounce
+//   pitch  BallsPitchMapPitch
+// }
+
+// type BallsPitchMapBounce {
+//   X Int
+//   Y Int
+// }
+
+// type BallsPitchMapPitch {
+//   X Int
+//   Y Int
+// }
+
+// type BallsWagonWheel {
+//   afterBounce Int
+//   elevation   Int
+// }
+
+// type FollowsHistory {
+//   id           String?  @map("_id") @db.ObjectId
+//   followStatus Boolean
+//   updatedOn    DateTime @db.Date
+// }
+
+// type FootballcommentariesMetaData {
+//   backgroundColor  String?
+//   bottomText       String?
+//   eventId          String? @db.ObjectId
+//   eventTime        Int?
+//   statement        String?
+//   status           String?
+//   teamName         String?
+//   teamProfileImage String?
+//   time             Int?
+//   videoId          Float?
+//   videoLink        String?
+//   winText          String?
+// }
+
+// type FootballeventsActionDetails {
+//   boxDetails       Int?
+//   directionOfBall  Int?
+//   goalAreaDetails  Int?
+//   goalDetails      Int?
+//   goalKeeperAction Int?
+//   height           Int?
+//   missDetails      Int?
+//   pitchDetails     Int?
+//   saveDetails      Int?
+//   sideOfGoal       Int?
+// }
+
+// type FootballeventsArea {
+//   lat  Int
+//   long Int
+// }
+
+// type FootballplayerstatsDribble {
+//   failure Int
+//   success Int
+// }
+
+// type FootballplayerstatsFreeKick {
+//   assistInHeaderGoal Int?
+//   block              Int?
+//   /// Multiple data types found: Int: 89.1%, FootballplayerstatsFreeKickCross: 10.9% out of 944 sampled entries
+//   cross              Json?
+//   goal               Int?
+//   goalAssist         Int?
+//   miss               Int?
+//   none               Int?
+//   reboundGoal        Int?
+//   save               Int?
+// }
+
+// type FootballplayerstatsFreeKickCross {
+//   failure Int
+//   success Int
+// }
+
+// type FootballplayerstatsPass {
+//   failure FootballplayerstatsPassFailure
+//   success FootballplayerstatsPassSuccess
+// }
+
+// type FootballplayerstatsPassFailure {
+//   withKey    Int
+//   withoutKey Int
+// }
+
+// type FootballplayerstatsPassSuccess {
+//   withKey    Int
+//   withoutKey Int
+// }
+
+// type FootballplayerstatsPenalty {
+//   goal    Int
+//   miss    Int
+//   none    Int?
+//   rebound Int
+//   save    Int
+// }
+
+// type FootballplayerstatsShot {
+//   block Int?
+//   cross Int?
+//   miss  Int
+//   none  Int?
+//   save  Int
+// }
+
+// type FootballplayerstatsTackle {
+//   failure Int
+//   success Int
+// }
+
+// type FootballrostersPlayers {
+//   firstName    String
+//   id           String   @db.ObjectId
+//   isCaptain    Boolean
+//   isGoalKeeper Boolean
+//   isInjured    Boolean?
+//   isSentOff    Boolean
+//   isSubstitute Boolean
+//   lastName     String
+//   profileImage String
+// }
+
+// type FootballscorecardsTeamOneScore {
+//   advantagePlay Int
+//   cornerKick    Int
+//   /// Multiple data types found: Int: 27.3%, FootballscorecardsTeamOneScoreDribble: 72.7% out of 44 sampled entries
+//   dribble       Json
+//   freeKick      FootballscorecardsTeamOneScoreFreeKick
+//   goal          Int
+//   goldenGoal    Int?
+//   injured       Int?
+//   keyPass       Int?
+//   offside       Int
+//   ownGoal       Int
+//   /// Multiple data types found: Int: 27.3%, FootballscorecardsTeamOneScorePass: 72.7% out of 44 sampled entries
+//   pass          Json
+//   penalty       FootballscorecardsTeamOneScorePenalty
+//   redCard       Int
+//   shot          FootballscorecardsTeamOneScoreShot
+//   substitute    Int
+//   /// Multiple data types found: Int: 27.3%, FootballscorecardsTeamOneScoreTackle: 72.7% out of 44 sampled entries
+//   tackle        Json
+//   throwIn       Int
+//   warning       Int
+//   yellowCard    Int
+// }
+
+// type FootballscorecardsTeamOneScoreDribble {
+//   failure Int
+//   success Int
+// }
+
+// type FootballscorecardsTeamOneScoreFreeKick {
+//   assistInHeaderGoal Int?
+//   block              Int
+//   /// Multiple data types found: Int: 77.3%, FootballscorecardsTeamOneScoreFreeKickCross: 22.7% out of 44 sampled entries
+//   cross              Json
+//   goal               Int
+//   goalAssist         Int?
+//   miss               Int
+//   none               Int?
+//   reboundGoal        Int?
+//   save               Int
+// }
+
+// type FootballscorecardsTeamOneScoreFreeKickCross {
+//   failure Int
+//   success Int
+// }
+
+// type FootballscorecardsTeamOneScorePass {
+//   failure FootballscorecardsTeamOneScorePassFailure
+//   success FootballscorecardsTeamOneScorePassSuccess
+// }
+
+// type FootballscorecardsTeamOneScorePassFailure {
+//   withKey    Int
+//   withoutKey Int
+// }
+
+// type FootballscorecardsTeamOneScorePassSuccess {
+//   withKey    Int
+//   withoutKey Int
+// }
+
+// type FootballscorecardsTeamOneScorePenalty {
+//   goal    Int
+//   miss    Int
+//   none    Int?
+//   rebound Int
+//   save    Int
+// }
+
+// type FootballscorecardsTeamOneScoreShot {
+//   block Int?
+//   cross Int?
+//   miss  Int
+//   none  Int?
+//   save  Int
+// }
+
+// type FootballscorecardsTeamOneScoreTackle {
+//   failure Int
+//   success Int
+// }
+
+// type FootballscorecardsTeamTwoScore {
+//   advantagePlay Int
+//   cornerKick    Int
+//   /// Multiple data types found: Int: 27.3%, FootballscorecardsTeamTwoScoreDribble: 72.7% out of 44 sampled entries
+//   dribble       Json
+//   freeKick      FootballscorecardsTeamTwoScoreFreeKick
+//   goal          Int
+//   goldenGoal    Int?
+//   injured       Int
+//   keyPass       Int?
+//   offside       Int
+//   ownGoal       Int
+//   /// Multiple data types found: Int: 27.3%, FootballscorecardsTeamTwoScorePass: 72.7% out of 44 sampled entries
+//   pass          Json
+//   penalty       FootballscorecardsTeamTwoScorePenalty
+//   redCard       Int
+//   shot          FootballscorecardsTeamTwoScoreShot
+//   substitute    Int?
+//   /// Multiple data types found: Int: 27.3%, FootballscorecardsTeamTwoScoreTackle: 72.7% out of 44 sampled entries
+//   tackle        Json
+//   throwIn       Int
+//   warning       Int
+//   yellowCard    Int
+// }
+
+// type FootballscorecardsTeamTwoScoreDribble {
+//   failure Int
+//   success Int
+// }
+
+// type FootballscorecardsTeamTwoScoreFreeKick {
+//   assistInHeaderGoal Int?
+//   block              Int?
+//   /// Multiple data types found: Int: 77.3%, FootballscorecardsTeamTwoScoreFreeKickCross: 22.7% out of 44 sampled entries
+//   cross              Json
+//   goal               Int?
+//   goalAssist         Int?
+//   miss               Int
+//   none               Int?
+//   reboundGoal        Int?
+//   save               Int
+// }
+
+// type FootballscorecardsTeamTwoScoreFreeKickCross {
+//   failure Int
+//   success Int
+// }
+
+// type FootballscorecardsTeamTwoScorePass {
+//   failure FootballscorecardsTeamTwoScorePassFailure
+//   success FootballscorecardsTeamTwoScorePassSuccess
+// }
+
+// type FootballscorecardsTeamTwoScorePassFailure {
+//   withKey    Int
+//   withoutKey Int
+// }
+
+// type FootballscorecardsTeamTwoScorePassSuccess {
+//   withKey    Int
+//   withoutKey Int
+// }
+
+// type FootballscorecardsTeamTwoScorePenalty {
+//   goal    Int
+//   miss    Int
+//   none    Int?
+//   rebound Int
+//   save    Int
+// }
+
+// type FootballscorecardsTeamTwoScoreShot {
+//   block Int?
+//   cross Int?
+//   miss  Int
+//   none  Int?
+//   save  Int
+// }
+
+// type FootballscorecardsTeamTwoScoreTackle {
+//   failure Int
+//   success Int
+// }
+
+// type HighlightsMetadata {
+//   bowler     String                       @db.ObjectId
+//   inning     String
+//   over       Int
+//   striker    String                       @db.ObjectId
+//   totalScore HighlightsMetadataTotalScore
+// }
+
+// type HighlightsMetadataTotalScore {
+//   score   Int
+//   wickets Int
+// }
+
+// type InningsExtraDetails {
+//   bye    Int
+//   legBye Int
+//   noBall Int
+//   wide   Int
+// }
+
+// type MatchanalyticsMediaImpressions {
+//   id        String   @map("_id") @db.ObjectId
+//   endTime   DateTime @db.Date
+//   live      Boolean
+//   startTime DateTime @db.Date
+//   userId    String?  @db.ObjectId
+// }
+
+// type MatchincidentsIncidentDetails {
+//   ballsCount  Int
+//   runs        Int
+//   wicketCount Int
+// }
+
+// type NewpostsVideos {
+//   id          String   @map("_id") @db.ObjectId
+//   aspectRatio Float?
+//   poster      String
+//   publishedAt DateTime @db.Date
+//   thumbnail   String
+//   videoUrl    String
+// }
+
+// type PlayeraggregatestatsBatStats {
+//   /// Multiple data types found: Float: 5.6%, Int: 94.4% out of 324 sampled entries
+//   average       Json
+//   battingRank   Int?
+//   bestScore     PlayeraggregatestatsBatStatsBestScore
+//   century       Int
+//   ducks         Int
+//   fifties       Int
+//   fours         Int
+//   innings       Int
+//   isOut         Boolean?
+//   matches       Int
+//   notOuts       Int
+//   runCount      Int?
+//   runs          Int
+//   sixes         Int
+//   strikeRate    Int
+//   totalBallPlay Int
+// }
+
+// type PlayeraggregatestatsBatStatsBestScore {
+//   out    Boolean
+//   score  Int
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   teamId Json?
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   userId Json?
+// }
+
+// type PlayeraggregatestatsBowlingStats {
+//   /// Multiple data types found: Float: 4.9%, Int: 95.1% out of 324 sampled entries
+//   average           Json
+//   best              PlayeraggregatestatsBowlingStatsBest
+//   bowlingRank       Int?
+//   dismissals        Int?
+//   /// Multiple data types found: Float: 6.5%, Int: 93.5% out of 324 sampled entries
+//   economy           Json
+//   fiveWickets       Int
+//   innings           Int
+//   maidens           Int
+//   matches           Int
+//   /// Multiple data types found: Float: 24.1%, Int: 75.9% out of 324 sampled entries
+//   over              Json
+//   runCount          Int?
+//   runs              Int
+//   /// Multiple data types found: Float: 0.9%, Int: 99.1% out of 324 sampled entries
+//   strikeRate        Json
+//   tenWickets        Int
+//   threeWicketsMatch Int
+//   totalBall         Int
+//   totalWickets      Int
+//   wicketCount       Int?
+// }
+
+// type PlayeraggregatestatsBowlingStatsBest {
+//   run    Int
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   teamId Json?
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   userId Json?
+//   wicket Int
+// }
+
+// type PlayerbatsmanstatsOutDetails {
+//   bowler  String? @db.ObjectId
+//   fielder String? @db.ObjectId
+//   outType Int?
+// }
+
+// type PlayerbatsmansuperoverstatsOutDetails {
+//   bowler  String  @db.ObjectId
+//   fielder String? @db.ObjectId
+//   outType Int
+// }
+
+// type RostersPlayers {
+//   firstName      String
+//   id             String  @db.ObjectId
+//   isCaptain      Boolean
+//   isSubstitute   Boolean
+//   isWicketKeeper Boolean
+//   lastName       String
+//   profileImage   String
+// }
+
+// type ScorecardsScore {
+//   /// Multiple data types found: Float: 56.6%, Int: 43.4% out of 800 sampled entries
+//   overs   Json?
+//   runs    Int?
+//   team    String?
+//   wickets Int?
+// }
+
+// type ScorecardsYetToBat {
+//   firstName String
+//   id        String
+//   lastName  String
+// }
+
+// type SuperinningsExtraDetails {
+//   bye    Int
+//   legBye Int
+//   noBall Int
+//   wide   Int
+// }
+
+// type TeamaggregatestatsMatches {
+//   id            String @map("_id") @db.ObjectId
+//   battingFirst  Int
+//   bowlingFirst  Int
+//   drawn         Int
+//   lost          Int
+//   total         Int
+//   type          Int
+//   /// Multiple data types found: Float: 6.1%, Int: 93.9% out of 247 sampled entries
+//   winPercentage Json
+//   won           Int
+// }
+
+// type TeamaggregatestatsTournaments {
+//   id    String @map("_id") @db.ObjectId
+//   total Int
+//   type  Int
+// }
+
+// type TournamentaggregatestatsBestBatting {
+//   bestRun Int
+//   out     Boolean
+//   teamId  String  @db.ObjectId
+//   userId  String  @db.ObjectId
+// }
+
+// type TournamentaggregatestatsBestBowling {
+//   runs    Int
+//   teamId  String @db.ObjectId
+//   userId  String @db.ObjectId
+//   wickets Int
+// }
+
+// type VideosVideoData {
+//   name        String
+//   poster      String
+//   publishedAt String
+//   thumbnail   String
+//   videoUrl    String
+// }
+
+// model activefootballmatches {
+//   id              String                       @id @default(auto()) @map("_id") @db.ObjectId
+//   v               Int                          @map("__v")
+//   addedTime       Int?
+//   createdAt       DateTime                     @db.Date
+//   currentHalfTime String                       @db.ObjectId
+//   extraTime       Int?
+//   fullTime        Boolean?
+//   injuredPlayers  String[]                     @db.ObjectId
+//   matchId         String                       @unique(map: "matchId_1") @db.ObjectId
+//   sentOffPlayers  String[]                     @db.ObjectId
+//   teamOne         ActivefootballmatchesTeamOne
+//   teamTwo         ActivefootballmatchesTeamTwo
+//   updatedAt       DateTime                     @db.Date
+// }
+
+// model activematches {
+//   id                 String                        @id @default(auto()) @map("_id") @db.ObjectId
+//   v                  Int                           @map("__v")
+//   bonus              ActivematchesBonus[]
+//   bowler             String?                       @db.ObjectId
+//   createdAt          DateTime                      @db.Date
+//   currentBalls       String[]                      @db.ObjectId
+//   currentPartnership String?                       @db.ObjectId
+//   dls                ActivematchesDls?
+//   followOnFlag       Boolean?
+//   inning             String                        @db.ObjectId
+//   lastBatsmanPair    Boolean
+//   match              String                        @unique(map: "match_1") @db.ObjectId
+//   nonStriker         String?                       @db.ObjectId
+//   over               String?                       @db.ObjectId
+//   overBalls          Int
+//   overRuns           Int
+//   overWickets        Int
+//   penalties          ActivematchesPenalties[]
+//   processDismissal   ActivematchesProcessDismissal
+//   striker            String?                       @db.ObjectId
+//   superOver          ActivematchesSuperOver?
+//   targetScore        Int?
+//   teamOne            ActivematchesTeamOne
+//   teamTwo            ActivematchesTeamTwo
+//   undoBall           Boolean
+//   updatedAt          DateTime                      @db.Date
+// }
+
+// model agendaJobs {
+//   id             String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Field referred in an index, but found no data to define the type.
+//   nextRunAt      Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   lastRunAt      Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   lastFinishedAt Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   name           Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   priority       Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   lockedAt       Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   disabled       Json?
+
+//   @@index([nextRunAt(sort: Desc), lastRunAt(sort: Desc), lastFinishedAt(sort: Desc)], map: "nextRunAt_-1_lastRunAt_-1_lastFinishedAt_-1")
+//   @@index([name, nextRunAt(sort: Desc), lastRunAt(sort: Desc), lastFinishedAt(sort: Desc)], map: "name_1_nextRunAt_-1_lastRunAt_-1_lastFinishedAt_-1")
+//   @@index([name, nextRunAt, priority(sort: Desc), lockedAt, disabled], map: "findAndLockNextJobIndex")
+// }
+
+// model analytics {
+//   id     String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Field referred in an index, but found no data to define the type.
+//   userId Json?
+
+//   @@index([userId], map: "userId_1")
+// }
+
+// model balldumps {
+//   id        String              @id @default(auto()) @map("_id") @db.ObjectId
+//   v         Int                 @map("__v")
+//   createdAt DateTime            @db.Date
+//   dataDump  BalldumpsDataDump[]
+//   matchId   String              @db.ObjectId
+//   updatedAt DateTime            @db.Date
+
+//   @@index([matchId], map: "matchId_1")
+// }
+
+// model balls {
+//   id                    String                @id @default(auto()) @map("_id") @db.ObjectId
+//   v                     Int                   @map("__v")
+//   ballNumber            Int
+//   bowler                String                @db.ObjectId
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   catchDroppedFielderId Json?
+//   createdAt             DateTime              @db.Date
+//   dismissalDetails      BallsDismissalDetails
+//   extraDetails          BallsExtraDetails[]
+//   inningId              String                @db.ObjectId
+//   matchId               String                @db.ObjectId
+//   nonStriker            String                @db.ObjectId
+//   overId                String                @db.ObjectId
+//   pitchMap              BallsPitchMap
+//   runScored             Int
+//   runType               Int
+//   striker               String                @db.ObjectId
+//   updatedAt             DateTime              @db.Date
+//   wagonWheel            BallsWagonWheel
+
+//   @@index([matchId], map: "matchId_1")
+//   @@index([overId], map: "overId_1")
+// }
+
+// model blockusers {
+//   id        String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Field referred in an index, but found no data to define the type.
+//   userId    Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   blockUser Json?
+
+//   @@index([userId], map: "userId_1")
+//   @@index([blockUser], map: "blockUser_1")
+// }
+
+// model commentaries {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   borderColor String?
+//   createdAt   DateTime @db.Date
+//   fillColor   String
+//   matchId     String   @db.ObjectId
+//   outcomeBox  String
+//   /// Multiple data types found: Float: 99.1%, Int: 0.9% out of 1000 sampled entries
+//   over        Json
+//   subHeading  String
+//   textColor   String
+//   title       String
+//   updatedAt   DateTime @db.Date
+
+//   @@index([matchId], map: "matchId_1")
+// }
+
+// model featuredcards {
+//   id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+//   v                   Int?      @map("__v")
+//   createdAt           DateTime? @db.Date
+//   featureType         String?
+//   isMyySportsOriginal Boolean?
+//   isVisible           Boolean
+//   link                String
+//   media               String
+//   order               Int
+//   resource            String
+//   /// Multiple data types found: String: 42.9%, String (ObjectId): 57.1% out of 7 sampled entries
+//   resourceId          Json
+//   updatedAt           DateTime? @db.Date
+// }
+
+// model followings {
+//   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v            Int      @map("__v")
+//   createdAt    DateTime @db.Date
+//   followStatus Boolean
+//   follower     String   @db.ObjectId
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   history      Json?
+//   resourceId   String   @db.ObjectId
+//   resourceName String
+//   updatedAt    DateTime @db.Date
+//   /// Field referred in an index, but found no data to define the type.
+//   followerId   Json?
+
+//   @@unique([resourceId, followerId], map: "resourceId_1_followerId_1")
+//   @@unique([resourceId, follower], map: "resourceId_1_follower_1")
+// }
+
+// model follows {
+//   id           String           @id @default(auto()) @map("_id") @db.ObjectId
+//   v            Int?             @map("__v")
+//   createdAt    DateTime?        @db.Date
+//   followStatus Boolean
+//   follower     String?          @db.ObjectId
+//   history      FollowsHistory[]
+//   resourceId   String           @db.ObjectId
+//   resourceName String
+//   updatedAt    DateTime?        @db.Date
+// }
+
+// model footballcommentaries {
+//   id        String                       @id @default(auto()) @map("_id") @db.ObjectId
+//   v         Int                          @map("__v")
+//   createdAt DateTime                     @db.Date
+//   event     Int
+//   matchId   String                       @db.ObjectId
+//   metaData  FootballcommentariesMetaData
+//   type      Int
+//   updatedAt DateTime                     @db.Date
+
+//   @@index([matchId], map: "matchId_1")
+// }
+
+// model footballevents {
+//   id                  String                       @id @default(auto()) @map("_id") @db.ObjectId
+//   v                   Int                          @map("__v")
+//   actionDetails       FootballeventsActionDetails?
+//   actionType          Int?
+//   area                FootballeventsArea?
+//   blocker             String?                      @db.ObjectId
+//   cornerSide          Int?
+//   createdAt           DateTime                     @db.Date
+//   crossPlayer         String?                      @db.ObjectId
+//   event               Int
+//   eventTime           Int?
+//   goalByPlayer        String?                      @db.ObjectId
+//   goalKeeper          String?                      @db.ObjectId
+//   isSuccess           Boolean?
+//   isVisible           Boolean
+//   keyPass             Boolean?
+//   matchId             String?                      @db.ObjectId
+//   noOfPlayersDribbled Int?
+//   note                String?
+//   playerOfChosenTeam  String?                      @db.ObjectId
+//   punishment          Int?
+//   reboundTakenBy      String?                      @db.ObjectId
+//   receivedBy          String?                      @db.ObjectId
+//   statement           String?
+//   takenBy             String?                      @db.ObjectId
+//   teamId              String?                      @db.ObjectId
+//   timeStamp           DateTime                     @db.Date
+//   updatedAt           DateTime                     @db.Date
+// }
+
+// model footballhighlights {
+//   id      String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Field referred in an index, but found no data to define the type.
+//   matchId Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   author  Json?
+
+//   @@index([matchId], map: "matchId_1")
+//   @@index([author], map: "author_1")
+// }
+
+// model footballpenaltyshoots {
+//   id      String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Field referred in an index, but found no data to define the type.
+//   matchId Json?  @unique(map: "matchId_1")
+// }
+
+// model footballplayerstats {
+//   id              String                       @id @default(auto()) @map("_id") @db.ObjectId
+//   v               Int                          @map("__v")
+//   advantagePlay   Int
+//   cornerKick      Int
+//   createdAt       DateTime                     @db.Date
+//   /// Multiple data types found: Int: 33.9%, FootballplayerstatsDribble: 66.1% out of 943 sampled entries
+//   dribble         Json?
+//   freeKick        FootballplayerstatsFreeKick?
+//   goal            Int
+//   goldenGoal      Int?
+//   halftimeId      String?                      @db.ObjectId
+//   injured         Int?
+//   keyPass         Int?
+//   matchId         String                       @db.ObjectId
+//   offside         Int
+//   ownGoal         Int
+//   /// Multiple data types found: Int: 34.8%, FootballplayerstatsPass: 65.2% out of 955 sampled entries
+//   pass            Json
+//   penalty         FootballplayerstatsPenalty
+//   playerId        String                       @db.ObjectId
+//   redCard         Int
+//   shot            FootballplayerstatsShot
+//   substituted     Int?
+//   /// Multiple data types found: Int: 34%, FootballplayerstatsTackle: 66% out of 944 sampled entries
+//   tackle          Json?
+//   throwIn         Int?
+//   updatedAt       DateTime                     @db.Date
+//   warning         Int
+//   yellowCard      Int
+//   /// Field referred in an index, but found no data to define the type.
+//   footballMatchId Json?
+
+//   @@index([footballMatchId], map: "footballMatchId_1")
+//   @@index([footballMatchId, halftimeId], map: "footballMatchId_1_halftimeId_1")
+// }
+
+// model footballrosters {
+//   id        String                   @id @default(auto()) @map("_id") @db.ObjectId
+//   v         Int                      @map("__v")
+//   createdAt DateTime                 @db.Date
+//   players   FootballrostersPlayers[]
+//   team      String
+//   updatedAt DateTime                 @db.Date
+//   /// Field referred in an index, but found no data to define the type.
+//   matchId   Json?
+
+//   @@index([team], map: "team_1")
+//   @@index([matchId], map: "matchId_1")
+// }
+
+// model footballscorecards {
+//   id                 String                         @id @default(auto()) @map("_id") @db.ObjectId
+//   v                  Int                            @map("__v")
+//   createdAt          DateTime                       @db.Date
+//   matchHalfTimeId    String                         @db.ObjectId
+//   teamOnePlayerStats String[]                       @db.ObjectId
+//   teamOneScore       FootballscorecardsTeamOneScore
+//   teamTwoPlayerStats String[]                       @db.ObjectId
+//   teamTwoScore       FootballscorecardsTeamTwoScore
+//   updatedAt          DateTime                       @db.Date
+
+//   @@index([matchHalfTimeId], map: "matchHalfTimeId_1")
+// }
+
+// model footballtosses {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   callingTeam String   @db.ObjectId
+//   createdAt   DateTime @db.Date
+//   electedTo   Int
+//   matchId     String   @unique(map: "matchId_1") @db.ObjectId
+//   result      String
+//   sideCalled  Int
+//   tossOutcome Int
+//   updatedAt   DateTime @db.Date
+
+//   @@index([callingTeam], map: "callingTeam_1")
+// }
+
+// model halftimes {
+//   id             String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v              Int      @map("__v")
+//   createdAt      DateTime @db.Date
+//   footballEvents String[] @db.ObjectId
+//   halfTimeNumber Int
+//   kickOffPlayer  String?  @db.ObjectId
+//   matchId        String   @db.ObjectId
+//   scoreCard      String   @db.ObjectId
+//   teamOnTop      String   @db.ObjectId
+//   updatedAt      DateTime @db.Date
+
+//   @@unique([matchId, halfTimeNumber], map: "matchId_1_halfTimeNumber_1")
+// }
+
+// model highlights {
+//   id                    String             @id @default(auto()) @map("_id") @db.ObjectId
+//   v                     Int                @map("__v")
+//   author                String
+//   createdAt             DateTime           @db.Date
+//   expiryUpdateTimestamp DateTime           @db.Date
+//   highlightType         String
+//   isFeatured            Boolean
+//   isProcessed           Boolean
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   likes                 Json?
+//   link                  String
+//   matchId               String             @db.ObjectId
+//   metadata              HighlightsMetadata
+//   randomLike            Int
+//   randomView            Int
+//   updatedAt             DateTime           @db.Date
+//   videoClipReferenceId  String
+//   videoId               Float
+//   videoJobId            String
+//   views                 Int
+
+//   @@index([author], map: "author_1")
+//   @@index([matchId], map: "matchId_1")
+// }
+
+// model innings {
+//   id           String              @id @default(auto()) @map("_id") @db.ObjectId
+//   v            Int                 @map("__v")
+//   battingTeam  String
+//   bowlingTeam  String
+//   createdAt    DateTime            @db.Date
+//   extraDetails InningsExtraDetails
+//   inningNumber Int
+//   matchId      String              @db.ObjectId
+//   updatedAt    DateTime            @db.Date
+
+//   @@unique([matchId, inningNumber], map: "matchId_1_inningNumber_1")
+// }
+
+// model invitations {
+//   id         String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Field referred in an index, but found no data to define the type.
+//   receiver   Json?
+//   /// Field referred in an index, but found no data to define the type.
+//   inviteCode Json?
+
+//   @@index([receiver, inviteCode], map: "receiver_1_inviteCode_1")
+// }
+
+// model matchanalytics {
+//   id               String                           @id @default(auto()) @map("_id") @db.ObjectId
+//   v                Int                              @map("__v")
+//   createdAt        DateTime                         @db.Date
+//   matchId          String                           @db.ObjectId
+//   mediaImpressions MatchanalyticsMediaImpressions[]
+//   updatedAt        DateTime                         @db.Date
+
+//   @@index([matchId], map: "matchId_1")
+// }
+
+// model matchincidents {
+//   id              String                        @id @default(auto()) @map("_id") @db.ObjectId
+//   v               Int                           @map("__v")
+//   affectedTeamId  String                        @db.ObjectId
+//   causingTeamId   String                        @db.ObjectId
+//   createdAt       DateTime                      @db.Date
+//   incidentDetails MatchincidentsIncidentDetails
+//   incidentEntity  String                        @db.ObjectId
+//   incidentRef     String
+//   inningId        String                        @db.ObjectId
+//   matchId         String                        @db.ObjectId
+//   typeOfIncident  Int
+//   updatedAt       DateTime                      @db.Date
+
+//   @@index([inningId, matchId], map: "inningId_1_matchId_1")
+//   @@index([matchId], map: "matchId_1")
+// }
+
+// model newposts {
+//   id             String           @id @default(auto()) @map("_id") @db.ObjectId
+//   v              Int              @map("__v")
+//   author         String           @db.ObjectId
+//   content        String
+//   createdAt      DateTime         @db.Date
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   imageUrls      Json?
+//   isActive       Boolean
+//   isDeleted      Boolean
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   likes          Json?
+//   link           String
+//   matchId        String?          @db.ObjectId
+//   matchName      String?
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   media          Json?
+//   numberOfShares Int
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   replyIds       Json?
+//   resourceId     String           @db.ObjectId
+//   resourceName   String
+//   time           DateTime         @db.Date
+//   updatedAt      DateTime         @db.Date
+//   videos         NewpostsVideos[]
+//   /// Field referred in an index, but found no data to define the type.
+//   parentPost     Json?
+
+//   @@index([author], map: "author_1")
+//   @@index([matchId], map: "matchId_1")
+//   @@index([parentPost], map: "parentPost_1")
+// }
+
+// model overs {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   bowler      String   @db.ObjectId
+//   bowlingSide String?
+//   createdAt   DateTime @db.Date
+//   inningsId   String   @db.ObjectId
+//   matchId     String   @db.ObjectId
+//   overNo      Int
+//   runs        Int
+//   updatedAt   DateTime @db.Date
+
+//   @@index([matchId], map: "matchId_1")
+//   @@index([inningsId], map: "inningsId_1")
+// }
+
+// model partnerships {
+//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v          Int      @map("__v")
+//   ballsFaced Int
+//   createdAt  DateTime @db.Date
+//   matchId    String   @db.ObjectId
+//   playerOne  String   @db.ObjectId
+//   playerTwo  String   @db.ObjectId
+//   runs       Int
+//   team       String
+//   updatedAt  DateTime @db.Date
+
+//   @@index([matchId], map: "matchId_1")
+//   @@index([playerOne], map: "playerOne_1")
+//   @@index([playerTwo], map: "playerTwo_1")
+// }
+
+// model playeraggregatestats {
+//   id           String                           @id @default(auto()) @map("_id") @db.ObjectId
+//   v            Int                              @map("__v")
+//   batStats     PlayeraggregatestatsBatStats
+//   bowlingStats PlayeraggregatestatsBowlingStats
+//   matchType    Int
+//   playerId     String                           @db.ObjectId
+
+//   @@index([playerId], map: "playerId_1")
+// }
+
+// model playerbatsmanstats {
+//   id                  String                        @id @default(auto()) @map("_id") @db.ObjectId
+//   v                   Int                           @map("__v")
+//   ballsCount          Int
+//   createdAt           DateTime                      @db.Date
+//   currentMatchCentury Boolean
+//   currentMatchFifty   Boolean
+//   fourCount           Int
+//   inningId            String?                       @db.ObjectId
+//   isOut               Boolean
+//   matchId             String                        @db.ObjectId
+//   outDetails          PlayerbatsmanstatsOutDetails?
+//   player              String                        @db.ObjectId
+//   runCount            Int
+//   sixCount            Int
+//   updatedAt           DateTime                      @db.Date
+// }
+
+// model playerbatsmansuperoverstats {
+//   id                  String                                 @id @default(auto()) @map("_id") @db.ObjectId
+//   v                   Int                                    @map("__v")
+//   ballsCount          Int
+//   createdAt           DateTime                               @db.Date
+//   currentMatchCentury Boolean
+//   currentMatchFifty   Boolean
+//   fourCount           Int
+//   inningId            String                                 @db.ObjectId
+//   isOut               Boolean
+//   matchId             String                                 @db.ObjectId
+//   outDetails          PlayerbatsmansuperoverstatsOutDetails?
+//   player              String                                 @db.ObjectId
+//   runCount            Int
+//   sixCount            Int
+//   updatedAt           DateTime                               @db.Date
+
+//   @@unique([player, inningId], map: "player_1_inningId_1")
+//   @@index([matchId], map: "matchId_1")
+//   @@index([player], map: "player_1")
+// }
+
+// model playerbowlerstats {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   ballsThrown Int
+//   createdAt   DateTime @db.Date
+//   inningId    String?  @db.ObjectId
+//   maidenOver  Int
+//   matchId     String   @db.ObjectId
+//   player      String   @db.ObjectId
+//   runCount    Int
+//   updatedAt   DateTime @db.Date
+//   wicketCount Int
+// }
+
+// model playerbowlersuperoverstats {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   ballsThrown Int
+//   createdAt   DateTime @db.Date
+//   inningId    String   @db.ObjectId
+//   maidenOver  Int
+//   matchId     String   @db.ObjectId
+//   player      String   @db.ObjectId
+//   runCount    Int
+//   updatedAt   DateTime @db.Date
+//   wicketCount Int
+
+//   @@unique([player, inningId], map: "player_1_inningId_1")
+//   @@index([matchId], map: "matchId_1")
+//   @@index([player], map: "player_1")
+// }
+
+// model points {
+//   id              String   @id @default(auto()) @map("_id") @db.ObjectId
+//   GD              Int?
+//   NRR             Int
+//   v               Int      @map("__v")
+//   createdAt       DateTime @db.Date
+//   draw            Int
+//   footballMatches String[] @db.ObjectId
+//   lost            Int
+//   matches         String[] @db.ObjectId
+//   played          Int
+//   pts             Int
+//   round           String   @db.ObjectId
+//   team            String   @db.ObjectId
+//   updatedAt       DateTime @db.Date
+//   won             Int
+
+//   @@index([round], map: "round_1")
+//   @@index([team], map: "team_1")
+//   @@index([matches], map: "matches_1")
+// }
+
+// model posts {
+//   id             String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v              Int      @map("__v")
+//   author         String   @db.ObjectId
+//   content        String
+//   createdAt      DateTime @db.Date
+//   isActive       Boolean
+//   isDeleted      Boolean
+//   likes          String[] @db.ObjectId
+//   link           String?
+//   matchId        String?  @db.ObjectId
+//   matchName      String?
+//   media          String[]
+//   numberOfShares Int
+//   parentPost     String?  @db.ObjectId
+//   replyIds       String[] @db.ObjectId
+//   time           DateTime @db.Date
+//   updatedAt      DateTime @db.Date
+
+//   @@index([author, matchId], map: "author_1_matchId_1")
+//   @@index([author], map: "author_1")
+//   @@index([matchId], map: "matchId_1")
+//   @@index([parentPost], map: "parentPost_1")
+// }
+
+// model reports {
+//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v          Int      @map("__v")
+//   authorId   String   @db.ObjectId
+//   createdAt  DateTime @db.Date
+//   reason     Int
+//   reportId   String
+//   resource   String
+//   resourceId String   @db.ObjectId
+//   severity   Int
+//   updatedAt  DateTime @db.Date
+
+//   @@index([resourceId], map: "resourceId_1")
+//   @@index([authorId], map: "authorId_1")
+// }
+
+// model rosters {
+//   id        String           @id @default(auto()) @map("_id") @db.ObjectId
+//   v         Int              @map("__v")
+//   createdAt DateTime         @db.Date
+//   players   RostersPlayers[]
+//   team      String
+//   updatedAt DateTime         @db.Date
+//   /// Field referred in an index, but found no data to define the type.
+//   matchId   Json?
+
+//   @@index([matchId], map: "matchId_1")
+//   @@index([team], map: "team_1")
+// }
+
+// model rounds {
+//   id              String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v               Int      @map("__v")
+//   createdAt       DateTime @db.Date
+//   footballMatches String[] @db.ObjectId
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   footballPoints  Json?
+//   matches         String[] @db.ObjectId
+//   name            String
+//   points          String[] @db.ObjectId
+//   updatedAt       DateTime @db.Date
+
+//   @@index([matches], map: "matches_1")
+//   @@index([points], map: "points_1")
+// }
+
+// model scorecards {
+//   id               String               @id @default(auto()) @map("_id") @db.ObjectId
+//   v                Int                  @map("__v")
+//   batters          String[]             @db.ObjectId
+//   bowlers          String[]             @db.ObjectId
+//   createdAt        DateTime             @db.Date
+//   inningId         String               @db.ObjectId
+//   score            ScorecardsScore
+//   superOverBatters String[]             @db.ObjectId
+//   superOverBowlers String[]             @db.ObjectId
+//   updatedAt        DateTime             @db.Date
+//   yetToBat         ScorecardsYetToBat[]
+
+//   @@index([inningId], map: "inningId_1")
+// }
+
+// model shows {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   author      String?  @db.ObjectId
+//   banner      String
+//   createdAt   DateTime @db.Date
+//   description String
+//   editor      String[] @db.ObjectId
+//   logo        String
+//   name        String
+//   updatedAt   DateTime @db.Date
+// }
+
+// model sponsors {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   createdAt   DateTime @db.Date
+//   mediaUrl    String
+//   sponsorType String
+//   updatedAt   DateTime @db.Date
+// }
+
+// model stats {
+//   id                        String    @id @default(auto()) @map("_id") @db.ObjectId
+//   v                         Int       @map("__v")
+//   createdAt                 DateTime  @db.Date
+//   /// Multiple data types found: Float: 32.4%, Int: 67.6% out of 330 sampled entries
+//   currentRunRate            Json
+//   matchId                   String    @unique(map: "matchId_1") @db.ObjectId
+//   /// Multiple data types found: Float: 70.5%, Int: 29.5% out of 308 sampled entries
+//   requiredRunRate           Json?
+//   teamOneFallOfWickets      Boolean[]
+//   teamOneRunAggregateSeries Int[]
+//   teamOneRunRateSeries      Int[]
+//   teamTwoFallOfWickets      Boolean[]
+//   teamTwoRunAggregateSeries Int[]
+//   teamTwoRunRateSeries      Int[]
+//   updatedAt                 DateTime  @db.Date
+// }
+
+// model superinnings {
+//   id           String                   @id @default(auto()) @map("_id") @db.ObjectId
+//   v            Int                      @map("__v")
+//   battingTeam  String
+//   bowlingTeam  String
+//   createdAt    DateTime                 @db.Date
+//   extraDetails SuperinningsExtraDetails
+//   inningNumber Int
+//   matchId      String                   @db.ObjectId
+//   updatedAt    DateTime                 @db.Date
+
+//   @@index([matchId, inningNumber], map: "matchId_1_inningNumber_1")
+// }
+
+// model superovers {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   bowler      String   @db.ObjectId
+//   bowlingSide String?
+//   createdAt   DateTime @db.Date
+//   inningsId   String   @db.ObjectId
+//   matchId     String   @db.ObjectId
+//   overNo      Int
+//   runs        Int
+//   updatedAt   DateTime @db.Date
+
+//   @@index([matchId], map: "matchId_1")
+//   @@index([inningsId], map: "inningsId_1")
+// }
+
+// model superstats {
+//   id                        String    @id @default(auto()) @map("_id") @db.ObjectId
+//   v                         Int       @map("__v")
+//   createdAt                 DateTime  @db.Date
+//   /// Multiple data types found: Float: 8.3%, Int: 91.7% out of 72 sampled entries
+//   currentRunRate            Json
+//   matchId                   String    @db.ObjectId
+//   /// Multiple data types found: Float: 33.3%, Int: 66.7% out of 55 sampled entries
+//   requiredRunRate           Json?
+//   teamOneFallOfWickets      Boolean[]
+//   teamOneRunAggregateSeries Int[]
+//   teamOneRunRateSeries      Int[]
+//   teamTwoFallOfWickets      Boolean[]
+//   teamTwoRunAggregateSeries Int[]
+//   teamTwoRunRateSeries      Int[]
+//   updatedAt                 DateTime  @db.Date
+
+//   @@index([matchId], map: "matchId_1")
+// }
+
+// model teamaggregatestats {
+//   id          String                          @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int                             @map("__v")
+//   createdAt   DateTime                        @db.Date
+//   matches     TeamaggregatestatsMatches[]
+//   teamId      String                          @db.ObjectId
+//   tournaments TeamaggregatestatsTournaments[]
+//   updatedAt   DateTime                        @db.Date
+
+//   @@index([teamId], map: "teamId_1")
+// }
+
+// model teamrequests {
+//   id     String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Field referred in an index, but found no data to define the type.
+//   teamId Json?
+
+//   @@index([teamId], map: "teamId_1")
+// }
+
+// model tosses {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v           Int      @map("__v")
+//   callingTeam String   @db.ObjectId
+//   createdAt   DateTime @db.Date
+//   electedTo   Int
+//   matchId     String   @unique(map: "matchId_1") @db.ObjectId
+//   result      String
+//   sideCalled  Int
+//   tossOutcome Int
+//   updatedAt   DateTime @db.Date
+
+//   @@index([callingTeam], map: "callingTeam_1")
+// }
+
+// model tournamentaggregatestats {
+//   id           String                              @id @default(auto()) @map("_id") @db.ObjectId
+//   v            Int                                 @map("__v")
+//   bestBatting  TournamentaggregatestatsBestBatting
+//   bestBowling  TournamentaggregatestatsBestBowling
+//   createdAt    DateTime                            @db.Date
+//   totalBye     Int
+//   totalFour    Int
+//   totalLegBye  Int
+//   totalNoBall  Int
+//   totalRun     Int
+//   totalSix     Int
+//   totalWickets Int
+//   totalWide    Int
+//   tournamentId String                              @db.ObjectId
+//   updatedAt    DateTime                            @db.Date
+// }
+
+// model userdevices {
+//   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v            Int      @map("__v")
+//   createdAt    DateTime @db.Date
+//   deviceId     String
+//   timeStamp    DateTime @db.Date
+//   updatedAt    DateTime @db.Date
+//   userSportsId String   @db.ObjectId
+
+//   @@index([deviceId], map: "deviceId_1")
+//   @@index([userSportsId], map: "userSportsId_1")
+// }
+
+// model videos {
+//   id                    String           @id @default(auto()) @map("_id") @db.ObjectId
+//   v                     Int              @map("__v")
+//   /// Multiple data types found: Float: 92.7%, Int: 7.3% out of 77 sampled entries
+//   aspectRatio           Json?
+//   createdAt             DateTime         @db.Date
+//   expiryUpdateTimestamp DateTime         @db.Date
+//   isDeleted             Boolean
+//   isFeatured            Boolean
+//   isProcessed           Boolean
+//   isVisible             Boolean
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   likes                 Json?
+//   link                  String
+//   title                 String
+//   updatedAt             DateTime         @db.Date
+//   userSportsId          String           @db.ObjectId
+//   videoData             VideosVideoData?
+//   videoId               Float
+//   videoType             String
+//   views                 Int
+
+//   @@index([isVisible], map: "isVisible_1")
+//   @@index([isProcessed], map: "isProcessed_1")
+//   @@index([userSportsId], map: "userSportsId_1")
+// }
+
+// model userverses {
+//   id   String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Field referred in an index, but found no data to define the type.
+//   fUid Json?  @unique(map: "fUid_1")
+// }

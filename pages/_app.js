@@ -1,7 +1,12 @@
-import '../styles/globals.css'
+import "../index.css";
+import Dashboard from "../components/dashboard";
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return (
+    <Dashboard>
+      <Component {...pageProps} />
+    </Dashboard>
+  );
 }
 
-export default MyApp
+export default MyApp;
