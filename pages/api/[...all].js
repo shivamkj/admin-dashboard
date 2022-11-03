@@ -1,7 +1,7 @@
 import url from "url";
 import queryString from "query-string";
 import { match } from "path-to-regexp";
-import { apiRoutes } from "./../../api/routes/index.js";
+import { apiRoutes } from "./../../backend/routes/index.js";
 
 const init = () => {
   for (const route of apiRoutes) {
@@ -15,6 +15,13 @@ const init = () => {
 init();
 
 export default async function handler(request, response) {
+  // check for authentication
+  console.log(request.headers);
+
+  if (request.headers.authorization != process.env.JWT_SECRET) {
+    return response.status(401).json({ message: "unauthorized" });
+  }
+
   // parse path params & query param from the request url
   const parsedUrl = url.parse(request.url);
   const path = parsedUrl.pathname.substring(4);

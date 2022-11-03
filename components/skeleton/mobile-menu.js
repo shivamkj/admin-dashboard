@@ -1,5 +1,5 @@
 import { useState, Fragment } from "react";
-import { navigationOptions } from "../menu.js";
+import { navigationOptions } from "./menu.js";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { classNames } from "../utils.js";

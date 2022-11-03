@@ -1,5 +1,5 @@
 import Header from "./header";
-import SideBar from "./sidebar";ß
+import SideBar from "./sidebar";
 import MobileMenu from "./mobile-menu";
 
 export default function Dashboard({ children }) {
