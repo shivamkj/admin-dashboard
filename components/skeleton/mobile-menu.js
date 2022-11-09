@@ -1,15 +1,14 @@
-import { useState, Fragment } from "react";
+import { Fragment } from "react";
 import { navigationOptions } from "./menu.js";
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { classNames } from "../utils.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { classNames } from "../../utils.js";
 
-export default function MobileMenu() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+export default function MobileMenu({ isOpen, setOpen }) {
   return (
-    <Transition.Root show={mobileMenuOpen} as={Fragment}>
-      <Dialog as="div" className="md:hidden" onClose={setMobileMenuOpen}>
+    <Transition.Root show={isOpen} as={Fragment}>
+      <Dialog as="div" className="md:hidden" onClose={setOpen}>
         <div className="fixed inset-0 z-40 flex">
           <Transition.Child
             as={Fragment}
@@ -45,9 +44,10 @@ export default function MobileMenu() {
                   <button
                     type="button"
                     className="h-12 w-12 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={() => setOpen(false)}
                   >
-                    <XMarkIcon
+                    <FontAwesomeIcon
+                      icon={faXmark}
                       className="h-6 w-6 text-white"
                       aria-hidden="true"
                     />
@@ -77,7 +77,8 @@ export default function MobileMenu() {
                         )}
                         aria-current={item.current ? "page" : undefined}
                       >
-                        <item.icon
+                        <FontAwesomeIcon
+                          icon={item.icon}
                           className={classNames(
                             item.current
                               ? "text-white"

@@ -1,13 +1,13 @@
 import Head from "next/head";
 
-export default function Home() {
+export default function Matches() {
   return (
     <>
       <Head>
-        <title>Home</title>
+        <title>Matches</title>
       </Head>
 
-      <h3>Home</h3>
+      <h3>Matches</h3>
     </>
   );
 }

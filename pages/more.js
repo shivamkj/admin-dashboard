@@ -1,13 +1,13 @@
 import Head from "next/head";
 
-export default function Home() {
+export default function More() {
   return (
     <>
       <Head>
-        <title>Home</title>
+        <title>More</title>
       </Head>
 
-      <h3>Home</h3>
+      <h3>More</h3>
     </>
   );
 }

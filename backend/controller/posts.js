@@ -1,4 +1,4 @@
-import prisma from "../prisma.js";
+import { prisma } from "../prisma.js";
 import { basicUserDetails } from "./shared.js";
 
 export const getAllPosts = async (page, limit) => {

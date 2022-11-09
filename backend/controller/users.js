@@ -1,4 +1,4 @@
-import prisma from "../prisma.js";
+import { prisma } from "../prisma.js";
 
 export const getAllUsers = async (page, limit) => {
   const users = await prisma.usersports.findMany({

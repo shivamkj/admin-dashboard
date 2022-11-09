@@ -1,10 +1,11 @@
-import prisma from "../prisma.js";
+import { prisma } from "../prisma.js";
 import { basicUserDetails } from "./shared.js";
 
 export const getAllMatches = async (page, limit, gameType) => {
   const matches = await getGameCollection(gameType).findMany({
     skip: page * limit,
     take: limit,
+    orderBy: [{ createdAt: "asc" }],
     select: {
       id: true,
       matchStatus: true,
@@ -41,12 +42,14 @@ export const getMatchOfficials = async (matchId) => {
   };
 
   const scorers = await prisma.userroles.findMany({
+    orderBy: [{ createdAt: "asc" }],
     where: {
       resourceId: matchId,
       role: "scorer",
       resourceName: "match",
     },
     select: selectFilter,
+    ß,
   });
 
   const streamers = await prisma.userroles.findMany({

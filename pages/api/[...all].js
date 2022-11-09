@@ -16,8 +16,6 @@ init();
 
 export default async function handler(request, response) {
   // check for authentication
-  console.log(request.headers);
-
   if (request.headers.authorization != process.env.JWT_SECRET) {
     return response.status(401).json({ message: "unauthorized" });
   }

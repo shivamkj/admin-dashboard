@@ -1,9 +1,12 @@
-import { useState } from "react";
 import { navigationOptions } from "./menu.js";
-import { classNames } from "../utils.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/router";
+import Link from 'next/link'
+
+import { classNames } from "../../utils.js";
 
 export default function SideBar() {
-  const [selectedOption, setselectedOption] = useState(0);
+  const router = useRouter();
 
   return (
     <div className="hidden w-28 bg-indigo-700 overflow-y-auto md:block">
@@ -17,29 +20,30 @@ export default function SideBar() {
         </div>
         <div className="flex-1 mt-6 w-full px-2 space-y-1">
           {navigationOptions.map((item, index) => (
-            <a
+            <Link
               key={item.name}
               href={item.href}
-              onClick={(e) => setselectedOption(index)}
               className={classNames(
-                index == selectedOption
+                router.asPath.startsWith(item.href) && item.href != "/"
                   ? "bg-indigo-800 text-white"
                   : "text-indigo-100 hover:bg-indigo-800 hover:text-white",
                 "group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium"
               )}
               aria-current={item.current ? "page" : undefined}
             >
-              <item.icon
+              <FontAwesomeIcon
+                icon={item.icon}
                 className={classNames(
                   item.current
                     ? "text-white"
                     : "text-indigo-300 group-hover:text-white",
-                  "h-6 w-6"
+                  "h-6 w-6 m-2"
                 )}
                 aria-hidden="true"
+                size="lg"
               />
               <span className="mt-2">{item.name}</span>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

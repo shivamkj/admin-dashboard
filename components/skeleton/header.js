@@ -1,28 +1,29 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { classNames } from "../utils.js";
-import {
-  MegaphoneIcon,
-  PlusIcon,
-  AcademicCapIcon,
-} from "@heroicons/react/24/outline";
+import { classNames } from "../../utils.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass, faBars } from "@fortawesome/free-solid-svg-icons";
 
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Sign out", href: "#" },
 ];
 
-export default function Header() {
+export default function Header({ setOpen }) {
   return (
     <header className="w-full">
       <div className="relative z-10 flex-shrink-0 h-16 bg-white border-b border-gray-200 shadow-sm flex">
         <button
           type="button"
           className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
-          onClick={() => setMobileMenuOpen(true)}
+          onClick={() => setOpen(true)}
         >
           <span className="sr-only">Open sidebar</span>
-          <MegaphoneIcon className="h-6 w-6" aria-hidden="true" />
+          <FontAwesomeIcon
+            icon={faBars}
+            className="h-6 w-6"
+            aria-hidden="true"
+          />
         </button>
         <div className="flex-1 flex justify-between px-4 sm:px-6">
           <div className="flex-1 flex">
@@ -32,7 +33,8 @@ export default function Header() {
               </label>
               <div className="relative w-full text-gray-400 focus-within:text-gray-600">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-                  <AcademicCapIcon
+                  <FontAwesomeIcon
+                    icon={faMagnifyingGlass}
                     className="flex-shrink-0 h-5 w-5"
                     aria-hidden="true"
                   />
@@ -88,14 +90,6 @@ export default function Header() {
                 </Menu.Items>
               </Transition>
             </Menu>
-
-            <button
-              type="button"
-              className="flex bg-indigo-600 p-1 rounded-full items-center justify-center text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <PlusIcon className="h-6 w-6" aria-hidden="true" />
-              <span className="sr-only">Add file</span>
-            </button>
           </div>
         </div>
       </div>
