@@ -1,6 +1,6 @@
 import ImageGridMenu from "../../components/molecule/image-grid-menu";
 
-const menus = [
+const supportOption = [
   {
     title: "Cricket",
     subTitle: "See all Cricket Matches",
@@ -13,7 +13,7 @@ const menus = [
     subTitle: "See all Soccer Matches",
     thumbnail:
       "https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80",
-    href: "/support/matches?gameType=0",
+    href: "/support/matches?gameType=1",
   },
   {
     title: "Teams",
@@ -22,23 +22,29 @@ const menus = [
       "https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80",
     href: "/support/teams",
   },
+  {
+    title: "Tournaments",
+    subTitle: "See all Tournaments (Soccer & Cricker)",
+    thumbnail:
+      "https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80",
+    href: "/support/tournaments",
+  },
+  {
+    title: "Users",
+    subTitle: "See all Users",
+    thumbnail:
+      "https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80",
+    href: "/support/users",
+  },
+  {
+    title: "Posts",
+    subTitle: "See all Posts",
+    thumbnail:
+      "https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80",
+    href: "/support/posts",
+  },
 ];
 
 export default function Support() {
-  return (
-    <ul
-      role="list"
-      className="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
-    >
-      {menus.map((menu) => (
-        <ImageGridMenu
-          key={menu.thumbnail}
-          title={menu.title}
-          subTitle={menu.subTitle}
-          imageSrc={menu.thumbnail}
-          href={menu.href}
-        />
-      ))}
-    </ul>
-  );
+  return <ImageGridMenu menus={supportOption} />;
 }

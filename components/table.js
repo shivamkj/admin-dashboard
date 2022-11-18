@@ -5,78 +5,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import CopyToClipBoard from "./copy-to-clipboard";
+import Loader from "./atoms/loader";
 
 const PAGE_SIZE = 6;
 
-export default function Table() {
-  const columns = useMemo(
-    () => [
-      {
-        header: () => "ID",
-        accessorKey: "_id",
-        cell: (info) => (
-          <td width="10%">
-            {/* <CopyToClipBoard /> */}
-            {info.getValue()}
-          </td>
-        ),
-      },
-      {
-        accessorKey: "logo",
-        header: () => "Logo",
-        cell: (info) => (
-          <td width="15%">
-            <img className="h-8" src={info.getValue()} />
-          </td>
-        ),
-      },
-      {
-        id: "name",
-        accessorFn: (row) => ({ name: row.name, shortName: row.shortName }),
-        header: () => "Name",
-        cell: (info) => {
-          console.log(info);
-          const { name, shortName } = info.getValue();
-          return (
-            <td width="30%">
-              <div className="font-medium text-gray-900">{name}</div>
-              <div className="text-gray-500">{shortName}</div>
-            </td>
-          );
-        },
-      },
-
-      {
-        id: "location",
-        accessorFn: (row) => ({
-          teamCity: row.teamCity,
-          address: row.location.address,
-        }),
-        header: () => "Location",
-        cell: (info) => {
-          console.log(info);
-          const { teamCity, address } = info.getValue();
-          return (
-            <td width="35%">
-              <div className="font-medium text-gray-900">{teamCity}</div>
-              <div className="text-gray-500">{address}</div>
-            </td>
-          );
-        },
-      },
-      {
-        id: "edit",
-        header: () => "Edit",
-        cell: (info) => (
-          <td width="20%" className="mr-6">
-            <button>Edit</button>
-          </td>
-        ),
-      },
-    ],
-    []
-  );
+export default function Table({ columnDefs, endpoint }) {
+  const columns = useMemo(() => columnDefs, []);
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -90,11 +24,11 @@ export default function Table() {
     [pageIndex, pageSize]
   );
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["teams", fetchDataOptions],
+  const { isLoading, error, data, isFetching } = useQuery({
+    queryKey: [endpoint, fetchDataOptions],
     queryFn: () =>
       fetch(
-        `http://localhost:3000/api/teams?page=${pageIndex}&limit=${pageSize}`,
+        `http://localhost:3000/api/${endpoint}?page=${pageIndex}&limit=${pageSize}`,
         {
           headers: {
             Authorization: "mysupersecret1234567120",
@@ -107,7 +41,7 @@ export default function Table() {
   const table = useReactTable({
     data: data?.data,
     columns,
-    pageCount: data?.total,
+    pageCount: Math.ceil(data?.total / PAGE_SIZE),
     state: { pagination },
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -116,7 +50,7 @@ export default function Table() {
     debugTable: true,
   });
 
-  if (isLoading) return "Loading...";
+  if (isLoading) return <Loader />;
 
   if (error) return "An error has occurred: " + error.message;
 
@@ -159,6 +93,7 @@ export default function Table() {
         <div className="h-2" />
         <Pagination table={table} />
       </div>
+      {isFetching ? <Loader /> : <></>}
     </div>
   );
 }
@@ -173,10 +108,11 @@ const Pagination = ({ table }) => {
     >
       <div className="hidden sm:block">
         <p className="text-sm text-gray-700">
-          Showing{" "}
-          <span className="font-medium">{resultEnd - (PAGE_SIZE - 1)} </span> to{" "}
-          <span className="font-medium">{resultEnd}</span> of{" "}
-          <span className="font-medium">{table.getPageCount()}</span> results
+          Showing Page{" "}
+          <span className="font-medium">
+            {table.getState().pagination.pageIndex + 1}{" "}
+          </span>{" "}
+          of <span className="font-medium">{table.getPageCount()}</span>
         </p>
       </div>
       <div className="flex-1 flex justify-between sm:justify-end">

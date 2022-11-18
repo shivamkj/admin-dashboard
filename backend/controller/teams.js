@@ -1,9 +1,10 @@
-import { prisma, mongodb } from "../prisma.js";
+import { ObjectId } from "mongodb";
+import { mongodb } from "../database/mongodb.js";
 
-const teamsCollection = mongodb.collection("teams");
+const teamCollection = mongodb.collection("teams");
 
 export const getAllTeams = async (page, limit) => {
-  const cursor = await teamsCollection.find(
+  const cursor = await teamCollection.find(
     {},
     {
       sort: { createdAt: -1 },
@@ -23,20 +24,19 @@ export const getAllTeams = async (page, limit) => {
   );
 
   const teams = [];
-
   await cursor.forEach((doc) => teams.push(doc));
 
   return {
     data: teams,
-    total: await teamsCollection.estimatedDocumentCount(),
+    total: await teamCollection.estimatedDocumentCount(),
     page: page,
     limit: limit,
   };
 };
 
 export const getOneTeam = async (teamId) => {
-  const team = await prisma.teams.findUniqueOrThrow({
-    where: { id: teamId },
+  const team = await teamCollection.findOne({
+    _id: ObjectId(teamId),
   });
 
   return team;

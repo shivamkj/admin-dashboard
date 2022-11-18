@@ -3,6 +3,7 @@ import { postsRoutes } from "./posts.js";
 import { tournamentsRoutes } from "./tournaments.js";
 import { usersRoutes } from "./users.js";
 import { teamsRoutes } from "./teams.js";
+import { supportRequests } from "./support.js";
 
 export const apiRoutes = [
   ...matchesRoutes,
@@ -10,4 +11,5 @@ export const apiRoutes = [
   ...tournamentsRoutes,
   ...usersRoutes,
   ...teamsRoutes,
+  ...supportRequests,
 ];

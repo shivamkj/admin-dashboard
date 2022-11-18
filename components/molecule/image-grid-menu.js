@@ -1,6 +1,25 @@
 import Link from "next/link";
 
-export default function ImageGridMenu({ title, imageSrc, subTitle, href }) {
+export default function ImageGridMenu({ menus }) {
+  return (
+    <ul
+      role="list"
+      className="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
+    >
+      {menus.map((menu) => (
+        <ImageGridMenuSingle
+          key={menu.thumbnail}
+          title={menu.title}
+          subTitle={menu.subTitle}
+          imageSrc={menu.thumbnail}
+          href={menu.href}
+        />
+      ))}
+    </ul>
+  );
+}
+
+function ImageGridMenuSingle({ title, imageSrc, subTitle, href }) {
   return (
     <li className="relative">
       <Link href={href}>
