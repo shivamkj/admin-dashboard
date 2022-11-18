@@ -5,7 +5,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import Loader from "./atoms/loader";
+import Loader from "../atoms/loader";
+import { httpClient } from "../../utils/index";
 
 const PAGE_SIZE = 6;
 
@@ -27,14 +28,9 @@ export default function Table({ columnDefs, endpoint }) {
   const { isLoading, error, data, isFetching } = useQuery({
     queryKey: [endpoint, fetchDataOptions],
     queryFn: () =>
-      fetch(
-        `http://localhost:3000/api/${endpoint}?page=${pageIndex}&limit=${pageSize}`,
-        {
-          headers: {
-            Authorization: "mysupersecret1234567120",
-          },
-        }
-      ).then((res) => res.json()),
+      httpClient
+        .get(`/${endpoint}?page=${pageIndex}&limit=${pageSize}`)
+        .then((res) => res.data),
     keepPreviousData: true,
   });
 

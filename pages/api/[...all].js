@@ -1,7 +1,7 @@
 import url from "url";
 import queryString from "query-string";
 import { match } from "path-to-regexp";
-import { apiRoutes } from "./../../backend/routes/index.js";
+import { apiRoutes } from "./../../backend/routes";
 
 const init = () => {
   for (const route of apiRoutes) {

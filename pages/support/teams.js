@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Table } from "../../components/index";
+import { SecondaryButton, Table } from "../../components";
 
 export default function Teams() {
   return (
@@ -13,11 +13,7 @@ export default function Teams() {
           {
             header: () => "ID",
             accessorKey: "_id",
-            cell: (info) => (
-              <td width="10%">
-                {info.getValue()}
-              </td>
-            ),
+            cell: (info) => <td width="10%">{info.getValue()}</td>,
           },
           {
             accessorKey: "logo",
@@ -33,7 +29,6 @@ export default function Teams() {
             accessorFn: (row) => ({ name: row.name, shortName: row.shortName }),
             header: () => "Name",
             cell: (info) => {
-              console.log(info);
               const { name, shortName } = info.getValue();
               return (
                 <td width="30%">
@@ -52,7 +47,6 @@ export default function Teams() {
             }),
             header: () => "Location",
             cell: (info) => {
-              console.log(info);
               const { teamCity, address } = info.getValue();
               return (
                 <td width="35%">
@@ -67,7 +61,7 @@ export default function Teams() {
             header: () => "Edit",
             cell: (info) => (
               <td width="20%" className="mr-6">
-                <button>Edit</button>
+                <SecondaryButton title="Edit" />
               </td>
             ),
           },

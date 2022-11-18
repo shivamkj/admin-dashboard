@@ -4,6 +4,7 @@ import {
   faBullhorn,
   faCalendarPlus,
   faHouse,
+  faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const navigationOptions = [

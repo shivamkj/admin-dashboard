@@ -3,7 +3,7 @@ import { navigationOptions } from "./menu.js";
 import { Dialog, Transition } from "@headlessui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { classNames } from "../../utils.js";
+import { classNames } from "../../utils/index";
 
 export default function MobileMenu({ isOpen, setOpen }) {
   return (

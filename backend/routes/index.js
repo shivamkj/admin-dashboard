@@ -1,9 +1,10 @@
-import { matchesRoutes } from "./matches.js";
-import { postsRoutes } from "./posts.js";
-import { tournamentsRoutes } from "./tournaments.js";
-import { usersRoutes } from "./users.js";
-import { teamsRoutes } from "./teams.js";
-import { supportRequests } from "./support.js";
+import { matchesRoutes } from "./matches";
+import { postsRoutes } from "./posts";
+import { tournamentsRoutes } from "./tournaments";
+import { usersRoutes } from "./users";
+import { teamsRoutes } from "./teams";
+import { supportRequests } from "./support";
+import { dataRoutes } from "./data";
 
 export const apiRoutes = [
   ...matchesRoutes,
@@ -12,4 +13,5 @@ export const apiRoutes = [
   ...usersRoutes,
   ...teamsRoutes,
   ...supportRequests,
+  ...dataRoutes,
 ];

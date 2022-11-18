@@ -1,4 +1,5 @@
-import ImageGridMenu from "../../components/molecule/image-grid-menu";
+import Head from "next/head";
+import { ImageGridMenu } from "../../components";
 
 const supportOption = [
   {
@@ -46,5 +47,13 @@ const supportOption = [
 ];
 
 export default function Support() {
-  return <ImageGridMenu menus={supportOption} />;
+  return (
+    <>
+      <Head>
+        <title>Support</title>
+      </Head>
+
+      <ImageGridMenu menus={supportOption} />
+    </>
+  );
 }

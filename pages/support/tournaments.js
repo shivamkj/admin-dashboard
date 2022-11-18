@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Table } from "../../components/index";
+import { Table } from "../../components";
 
 export default function Tournaments() {
   return (
