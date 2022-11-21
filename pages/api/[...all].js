@@ -13,7 +13,7 @@ import {
 } from "./../../backend/routes";
 import { dbConfig } from "./../../backend/database/mongodb";
 import { verifyToken } from "../../backend/controller/auth";
-import { BaseError } from "../../backend/controller/errors";
+import { BaseError, NotFoundError } from "../../backend/controller/errors";
 
 const apiRoutes = [
   ...authRoutes,
@@ -56,7 +56,8 @@ export default async function handler(request, response) {
 
     // check for authentication
     if (!path.startsWith("/auth")) {
-      const userDeatils = await verifyToken(request.headers.authorization);
+      const authToken = request.headers.cookie?.substring(5);
+      const userDeatils = await verifyToken(authToken);
       request.userDeatils = userDeatils;
     }
 
@@ -79,8 +80,7 @@ export default async function handler(request, response) {
       return response.status(200).json(responseBody);
     }
 
-    // return 404 if no route matches
-    response.status(404).json({ message: "Not Found" });
+    throw NotFoundError();
   } catch (error) {
     if (error instanceof BaseError) {
       return response.status(error.statusCode).json({ error: error.message });

@@ -8,12 +8,13 @@ export const authRoutes = [
     url: "/auth/login",
     handler: async (request, response) => {
       const { accessToken } = await loginWithGoogle(request.body.token);
-
+      // TODO: Add Secure also;
       response.setHeader(
         "Set-Cookie",
-        `auth=${accessToken}; HttpOnly; Secure; Max-Age=${THREE_DAY_SECONDS}`
+        `auth=${accessToken}; HttpOnly; Max-Age=${THREE_DAY_SECONDS}; Path=/;`
       );
-      return { accessToken };
+
+      return { success: true };
     },
   },
 ];

@@ -99,8 +99,12 @@ export const signToken = async (data) => {
 };
 
 export const verifyToken = async (jwtToken) => {
-  const { payload } = await jose.jwtVerify(jwtToken, ACCESS_TOKEN_SECRET, {
-    issuer: "myysports.com",
-  });
-  return payload;
+  try {
+    const { payload } = await jose.jwtVerify(jwtToken, ACCESS_TOKEN_SECRET, {
+      issuer: "myysports.com",
+    });
+    return payload;
+  } catch (error) {
+    throw new ValidationError("Couldn't verify token", 403);
+  }
 };

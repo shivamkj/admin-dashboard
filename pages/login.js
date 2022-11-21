@@ -13,15 +13,12 @@ export default function Login() {
     const { code } = router.query;
     if (code != null) {
       setLoading(true);
+
       httpClient
         .post("/auth/login", { token: decodeURI(code) })
-        .then((v) => {
-          setLoading(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-          alert(error.response.data.error);
-        });
+        .then((_) => router.replace("/"))
+        .catch((error) => alert(error.response.data.error))
+        .finally(() => setLoading(false));
     }
   }, [router]);
 

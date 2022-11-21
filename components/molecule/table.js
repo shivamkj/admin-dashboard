@@ -5,7 +5,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import Loader from "../atoms/loader";
+import { Loader } from "../atoms/loader";
 import { httpClient } from "../../utils/index";
 
 const PAGE_SIZE = 6;
@@ -42,7 +42,6 @@ export default function Table({ columnDefs, endpoint }) {
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    // getPaginationRowModel: getPaginationRowModel(), // If only doing manual pagination, you don't need this
     debugTable: true,
   });
 
