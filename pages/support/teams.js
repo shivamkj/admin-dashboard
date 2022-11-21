@@ -66,7 +66,7 @@ export default function Teams() {
             ),
           },
         ]}
-        endpoint="teams"
+        endpoint="/teams"
       />
     </>
   );

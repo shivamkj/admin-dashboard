@@ -3,7 +3,7 @@ import Tabs from "./navigation/tabs";
 
 import { PrimaryButton, SecondaryButton, OutlineButton } from "./atoms/button";
 import CopyToClipBoard from "./atoms/copy-to-clipboard";
-import Loader from "./atoms/loader";
+import { Loader, Overlay } from "./atoms/loader";
 import CheckboxInput from "./atoms/input-components/checkbox-input";
 import LongTextInput from "./atoms/input-components/long-text-input";
 import RadioGroupInput from "./atoms/input-components/radio-group-input";
@@ -22,6 +22,7 @@ export {
   OutlineButton,
   CopyToClipBoard,
   Loader,
+  Overlay,
   CheckboxInput,
   LongTextInput,
   RadioGroupInput,

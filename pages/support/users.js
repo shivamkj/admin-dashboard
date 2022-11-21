@@ -49,7 +49,7 @@ export default function Users() {
             ),
           },
         ]}
-        endpoint="users"
+        endpoint="/users"
       />
     </>
   );

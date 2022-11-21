@@ -61,7 +61,7 @@ export default function Tournaments() {
             ),
           },
         ]}
-        endpoint="tournaments"
+        endpoint="/tournaments"
       />
     </>
   );

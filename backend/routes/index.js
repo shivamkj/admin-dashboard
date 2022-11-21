@@ -5,13 +5,15 @@ import { usersRoutes } from "./users";
 import { teamsRoutes } from "./teams";
 import { supportRequests } from "./support";
 import { dataRoutes } from "./data";
+import { authRoutes } from "./auth";
 
-export const apiRoutes = [
-  ...matchesRoutes,
-  ...postsRoutes,
-  ...tournamentsRoutes,
-  ...usersRoutes,
-  ...teamsRoutes,
-  ...supportRequests,
-  ...dataRoutes,
-];
+export {
+  matchesRoutes,
+  postsRoutes,
+  tournamentsRoutes,
+  usersRoutes,
+  teamsRoutes,
+  supportRequests,
+  dataRoutes,
+  authRoutes,
+}

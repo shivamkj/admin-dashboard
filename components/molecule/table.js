@@ -29,7 +29,7 @@ export default function Table({ columnDefs, endpoint }) {
     queryKey: [endpoint, fetchDataOptions],
     queryFn: () =>
       httpClient
-        .get(`/${endpoint}?page=${pageIndex}&limit=${pageSize}`)
+        .get(`${endpoint}?page=${pageIndex}&limit=${pageSize}`)
         .then((res) => res.data),
     keepPreviousData: true,
   });

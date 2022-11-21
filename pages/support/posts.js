@@ -61,7 +61,7 @@ export default function Posts() {
             ),
           },
         ]}
-        endpoint="posts"
+        endpoint="/posts"
       />
     </>
   );

@@ -1,11 +1,41 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Loader, Overlay } from "../components";
+import { httpClient } from "../utils";
 
-export default function Auth() {
+export default function Login() {
+  const router = useRouter();
+
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const { code } = router.query;
+    if (code != null) {
+      setLoading(true);
+      httpClient
+        .post("/auth/login", { token: decodeURI(code) })
+        .then((v) => {
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          alert(error.response.data.error);
+        });
+    }
+  }, [router]);
+
   return (
     <>
       <Head>
-        <title>Auth</title>
+        <title>Login</title>
       </Head>
+
+      {isLoading && (
+        <Overlay>
+          <Loader />
+        </Overlay>
+      )}
 
       <div className="min-h-full flex">
         <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -22,17 +52,16 @@ export default function Auth() {
             </div>
 
             <div className="mt-8">
-              <div>
-                <div>
-                  <button className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                    <GoogleLogo />
-                    <p className="ml-2 text-sm font-medium text-gray-700">
-                      Sign in with Google
-                    </p>
-                    <span className="sr-only">Sign in with Google</span>
-                  </button>
-                </div>
-              </div>
+              <a
+                href="https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin&client_id=721447234326-71nu3911oi3gngegqisrhrg2rochr1cn.apps.googleusercontent.com&access_type=offline&response_type=code&prompt=consent&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email"
+                className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <GoogleLogo />
+                <p className="ml-2 text-sm font-medium text-gray-700">
+                  Sign in with Google
+                </p>
+                <span className="sr-only">Sign in with Google</span>
+              </a>
             </div>
           </div>
         </div>

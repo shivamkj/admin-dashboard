@@ -1,6 +1,5 @@
 import { ObjectId } from "mongodb";
 import { mongodb } from "../database/mongodb.js";
-import { basicUserDetails } from "./shared.js";
 import { getOneUser } from "./users.js";
 
 const cricket = mongodb.collection("matches");
