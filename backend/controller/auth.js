@@ -6,7 +6,6 @@ import { ValidationError, ExternalServiceError } from "./errors";
 const ACCESS_TOKEN_SECRET = new TextEncoder().encode(
   process.env.ACCESS_TOKEN_SECRET
 );
-export const REDIRECT_URI = "http://localhost:3000/login";
 
 export const loginWithGoogle = async (code) => {
   if (!code) throw new ValidationError("Token not found");
@@ -41,6 +40,7 @@ const getGoogleUserDetails = async (tokens) => {
 
     return googleUser.data;
   } catch (error) {
+    console.log(error.response.data);
     throw new ExternalServiceError(
       "Couldn't fetch your Google account details. Please try again",
       500
@@ -66,9 +66,9 @@ const getGoogleAuthTokens = async (code) => {
       GOOGLE_TOKEN_URL,
       querystring.stringify({
         code,
-        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
+        redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI,
         grant_type: "authorization_code",
       }),
       {
@@ -79,6 +79,7 @@ const getGoogleAuthTokens = async (code) => {
     );
     return data;
   } catch (error) {
+    console.log(error.response.data);
     throw new ValidationError("Couldn't verify token", 403);
   }
 };

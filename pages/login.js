@@ -4,6 +4,20 @@ import { useEffect, useState } from "react";
 import { Loader, Overlay } from "../components";
 import { httpClient } from "../utils";
 
+const redirectUriComponents = [
+  "https://accounts.google.com/o/oauth2/v2/auth?",
+  `redirect_uri=${encodeURI(process.env.NEXT_PUBLIC_REDIRECT_URI)}`,
+  `&client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`,
+  "&access_type=offline",
+  "&response_type=code",
+  "&prompt=consent",
+  `&scope=${encodeURI(
+    "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
+  )}`,
+];
+
+const REDIRECT_URI = redirectUriComponents.join("");
+
 export default function Login() {
   const router = useRouter();
 
@@ -50,7 +64,7 @@ export default function Login() {
 
             <div className="mt-8">
               <a
-                href="https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Flogin&client_id=721447234326-71nu3911oi3gngegqisrhrg2rochr1cn.apps.googleusercontent.com&access_type=offline&response_type=code&prompt=consent&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email"
+                href={REDIRECT_URI}
                 className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               >
                 <GoogleLogo />
