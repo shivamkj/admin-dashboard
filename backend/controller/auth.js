@@ -14,7 +14,7 @@ export const loginWithGoogle = async (code) => {
   const userDetails = await getGoogleUserDetails(token);
 
   if (!userDetails.email.endsWith("myysports.com")) {
-    throw new ValidationError("Only Myysports users are allowed", 403);
+    throw new ValidationError("Only Myysports users are allowed", 401);
   }
 
   const accessToken = await signToken({
@@ -68,7 +68,7 @@ const getGoogleAuthTokens = async (code) => {
         code,
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI,
+        redirect_uri: process.env.NEXT_PUBLIC_LOGIN_URL,
         grant_type: "authorization_code",
       }),
       {
@@ -80,7 +80,7 @@ const getGoogleAuthTokens = async (code) => {
     return data;
   } catch (error) {
     console.log(error.response.data);
-    throw new ValidationError("Couldn't verify token", 403);
+    throw new ValidationError("Couldn't verify token", 401);
   }
 };
 
@@ -102,6 +102,6 @@ export const verifyToken = async (jwtToken) => {
     });
     return payload;
   } catch (error) {
-    throw new ValidationError("Couldn't verify token", 403);
+    throw new ValidationError("Couldn't verify token", 401);
   }
 };
