@@ -27,10 +27,6 @@ export const loginWithGoogle = async (code) => {
   return { accessToken };
 };
 
-export const logout = async () => {
-  console.log("logout");
-};
-
 // Fetch the user's profile with the access token and bearer
 const getGoogleUserDetails = async (tokens) => {
   try {
@@ -92,7 +88,7 @@ export const signToken = async (data) => {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setIssuer("myysports.com")
-    .setExpirationTime("1h")
+    .setExpirationTime("3d")
     .sign(ACCESS_TOKEN_SECRET);
 
   return jwtToken;

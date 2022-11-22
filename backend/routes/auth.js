@@ -17,4 +17,16 @@ export const authRoutes = [
       return { success: true };
     },
   },
+  {
+    method: "POST",
+    url: "/auth/logout",
+    handler: async (_, response) => {
+      response.setHeader(
+        "Set-Cookie",
+        "auth=; Max-Age=0;"
+      );
+
+      return { success: true };
+    },
+  },
 ];
