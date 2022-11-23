@@ -6,7 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Loader } from "../atoms/loader";
-import { httpClient } from "../../utils/index";
+import { httpClient } from "../../utils";
 
 const PAGE_SIZE = 6;
 
