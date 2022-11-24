@@ -9,6 +9,8 @@ export const getDeleteRequests = async (page, limit) => {
       reason: 3, // reason 3 is for delete requests
     },
     {
+      skip: page * limit,
+      limit: limit,
       sort: { updatedAt: -1 },
     }
   );
@@ -34,5 +36,10 @@ export const getDeleteRequests = async (page, limit) => {
     supportReq.push(doc);
   }
 
-  return { data: supportReq };
+  return {
+    data: supportReq,
+    total: await supportCollection.countDocuments({ reason: 3 }),
+    page: page,
+    limit: limit,
+  };
 };
