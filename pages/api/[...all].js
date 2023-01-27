@@ -40,11 +40,6 @@ init();
 
 export default async function handler(request, response) {
   try {
-    // connect to mongoDB if not connected
-    if (!dbConfig.connected) {
-      await dbConfig.mongoClient.connect();
-    }
-
     // parse path params & query param from the request url
     const parsedUrl = url.parse(request.url);
     const path = parsedUrl.pathname.substring(4);

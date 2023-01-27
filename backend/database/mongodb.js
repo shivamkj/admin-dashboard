@@ -1,22 +1,30 @@
 import { MongoClient } from "mongodb";
 
-const mongoClient = new MongoClient(process.env.MONGO_DB_CONNECTION_STRING, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+function initMongoClient() {
+  const client = new MongoClient(process.env.MONGO_DB_CONNECTION_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.on("open", (_) => {
+    console.log("DB connected");
+  });
 
-const dbConfig = { connected: false, mongoClient: mongoClient };
+  client.on("topologyClosed", (_) => {
+    console.log("DB disconnected.");
+  });
 
-mongoClient.on("open", (_) => {
-  dbConfig.connected = true;
-  console.log("DB connected");
-});
+  global.mongoClient = client;
+  return client;
+}
 
-mongoClient.on("topologyClosed", (_) => {
-  dbConfig.connected = false;
-  console.log("DB disconnected.");
-});
+function initMongoDB() {
+  const db = mongoClient.db("prod");
+  global.mongodb = db;
+  return db;
+}
 
-const mongodb = mongoClient.db("prod");
+const mongoClient = global.mongoClient || initMongoClient();
 
-export { mongodb, dbConfig };
+const mongodb = global.mongodb || initMongoDB();
+
+export { mongodb };
