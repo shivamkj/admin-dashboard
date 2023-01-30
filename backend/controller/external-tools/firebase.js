@@ -16,4 +16,9 @@ const firebaseAdmin = global.firebaseAdmin || initFirebaseAdmin();
 
 const firbaseAuth = firebaseAdmin.auth();
 
-export { firbaseAuth };
+const getFirebaseUser = async (uid) => {
+  const firebaseUser = await firbaseAuth.getUser(uid);
+  return firebaseUser;
+};
+
+export { firbaseAuth, getFirebaseUser };

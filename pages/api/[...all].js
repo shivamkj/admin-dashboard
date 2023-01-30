@@ -75,7 +75,7 @@ export default async function handler(request, response) {
       return response.status(200).json(responseBody);
     }
 
-    throw NotFoundError();
+    throw new NotFoundError();
   } catch (error) {
     if (error instanceof BaseError) {
       return response.status(error.statusCode).json({ error: error.message });
